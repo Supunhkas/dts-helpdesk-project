@@ -1,4 +1,4 @@
-const data = [
+export const cards = [
   {
     tNo: "1",
     status: "high",
@@ -23,6 +23,12 @@ const data = [
     assignTo: "fedd",
     assetName: "test",
   },
+  {
+    tNo: "4",
+    status: "medium",
+    location: "CDPLC",
+    assignBy: "supun",
+    assignTo: "fedd",
+    assetName: "test",
+  },
 ];
-
-export default data;
