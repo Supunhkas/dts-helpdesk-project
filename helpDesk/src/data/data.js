@@ -31,4 +31,12 @@ export const cards = [
     assignTo: "fedd",
     assetName: "test",
   },
+  {
+    tNo: "5",
+    status: "medium",
+    location: "DTS",
+    assignBy: "supun",
+    assignTo: "fedd",
+    assetName: "test",
+  },
 ];
