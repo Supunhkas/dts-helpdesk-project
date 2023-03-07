@@ -35,7 +35,8 @@ export default function Tickets() {
   const [open, setOpen] = React.useState(false);
   const [openVIew, setOpenView] = React.useState(false);
   const [editVIew, setEditView] = React.useState(false);
-
+  // const [ticketId, setTicketId] = React.useState(null);
+  const [selectedRowData, setSelectedRowData] = React.useState(null);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -52,7 +53,7 @@ export default function Tickets() {
     console.log(ticketId);
     if (confirmMessage) {
       axios
-        .post(`http://192.168.176.174/HelpDesk/DeleteHelp?Id=${ticketId}`)
+        .post(`http://192.168.87.174/HelpDesk/DeleteHelp?Id=${ticketId}`)
         .then(() => {
           alert("Delete Successfully");
           getDate();
@@ -69,7 +70,7 @@ export default function Tickets() {
 
   const getDate = () => {
     axios
-      .get("http://192.168.176.174/HelpDesk/GetDetailedHelpDeskDetails")
+      .get("http://192.168.87.174/HelpDesk/GetDetailedHelpDeskDetails")
       .then((res) => {
         setTicketData(res.data);
       })
@@ -78,6 +79,9 @@ export default function Tickets() {
       });
   };
 
+  function viewData(rowData) {
+    setSelectedRowData(rowData);
+  }
   ///////////Get from Api
 
   return (
@@ -106,8 +110,8 @@ export default function Tickets() {
             <TableCell>Assign By</TableCell>
             <TableCell>Assign To</TableCell>
             <TableCell>Created Date</TableCell>
-            <TableCell>Company ID</TableCell>
-            {/* <TableCell>Description</TableCell> */}
+            {/* <TableCell>Company ID</TableCell> */}
+            <TableCell>Description</TableCell>
             <TableCell>Asset ID</TableCell>
             <TableCell>Severity</TableCell>
             <TableCell>Incident</TableCell>
@@ -141,14 +145,14 @@ export default function Tickets() {
               <TableCell>{item.assignedBy}</TableCell>
               <TableCell>{item.assignee}</TableCell>
               <TableCell>{item.createdDate}</TableCell>
-              <TableCell>{item.companyId}</TableCell>
-              {/* <TableCell>{item.description}</TableCell> */}
+              {/* <TableCell>{item.companyId}</TableCell> */}
+              <TableCell>{item.description}</TableCell>
               <TableCell>{item.assetId}</TableCell>
               <TableCell>{item.severity}</TableCell>
               <TableCell>{item.incident}</TableCell>
               <TableCell>
                 <Stack direction="row">
-                  <IconButton color="primary" onClick={() => setOpenView(true)}>
+                  <IconButton color="primary" onClick={() => viewData(item)}>
                     <RemoveRedEyeIcon />
                   </IconButton>
 
@@ -177,14 +181,15 @@ export default function Tickets() {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-      <ViewModal show={openVIew} close={() => setOpenView(false)} />
+
       <EditModal show={editVIew} close={() => setEditView(false)} />
+      {selectedRowData && (
+        <ViewModal
+          show={true}
+          rowData={selectedRowData}
+          close={() => setSelectedRowData(null)}
+        />
+      )}
     </React.Fragment>
   );
-}
-
-{
-  /* <IconButton color="error" onClick={() => deleteRow(item.ticketId)}>
-  <DeleteIcon />
-</IconButton>; */
 }
