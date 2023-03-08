@@ -5,7 +5,7 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
-
+import { Chip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
@@ -13,27 +13,21 @@ import AddIcon from "@mui/icons-material/Add";
 import EditSharpIcon from "@mui/icons-material/EditSharp";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import Title from "../pages/Title";
+import AddModal from "./AddModal";
+import ViewModal from "./ViewModal";
+import EditModal from "./EditModal";
 import axios from "axios";
 
-import { Chip } from "@mui/material";
-import Title from "./Title";
-import "./tickets.css";
-import AddModal from "../components/AddModal";
-import ViewModal from "../components/ViewModal";
-import EditModal from "../components/EditModal";
-
-function preventDefault(event) {
-  event.preventDefault();
-}
 const rowsPerPageOptions = [5, 10, 25];
-
-export default function Tickets() {
+const AssignByTicket = () => {
   const [ticketData, setTicketData] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(rowsPerPageOptions[0]);
   const [open, setOpen] = React.useState(false);
   const [openVIew, setOpenView] = React.useState(false);
   const [editVIew, setEditView] = React.useState(false);
+  var User_id = 2;
 
   const [selectedRowData, setSelectedRowData] = React.useState(null);
   const handleChangePage = (event, newPage) => {
@@ -69,7 +63,7 @@ export default function Tickets() {
 
   const getDate = () => {
     axios
-      .get("http://192.168.87.174/HelpDesk/GetDetailedHelpDeskDetails")
+      .get(`http://192.168.87.174/HelpDesk/GetAssignedTickets?id=${User_id}`)
       .then((res) => {
         setTicketData(res.data);
       })
@@ -81,33 +75,15 @@ export default function Tickets() {
   function viewData(rowData) {
     setSelectedRowData(rowData);
   }
-  ///////////Get from Api
-
   return (
     <React.Fragment>
-      <Stack
-        direction="row"
-        justifyContent={"space-between"}
-        style={{ marginBottom: 5 }}
-      >
-        <Title>Recent Tickets</Title>
-        <Button
-          variant="contained"
-          style={{ backgroundColor: "#00c853" }}
-          startIcon={<AddIcon />}
-          onClick={() => setOpen(true)}
-        >
-          Add new Ticket
-        </Button>
-      </Stack>
-      <AddModal show={open} close={() => setOpen(false)} />
       <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell>Ticket ID</TableCell>
             <TableCell>Status</TableCell>
-            <TableCell>Assign By</TableCell>
-            <TableCell>Assign To</TableCell>
+            {/* <TableCell>Assign By</TableCell> */}
+
             <TableCell>Created Date</TableCell>
             {/* <TableCell>Company ID</TableCell> */}
             <TableCell>Description</TableCell>
@@ -142,8 +118,8 @@ export default function Tickets() {
                   }
                 />
               </TableCell>
-              <TableCell>{item.assignedBy}</TableCell>
-              <TableCell>{item.assignee}</TableCell>
+              {/* <TableCell>{item.assignedBy}</TableCell> */}
+
               <TableCell>{item.createdDate}</TableCell>
               {/* <TableCell>{item.companyId}</TableCell> */}
               <TableCell>{item.description}</TableCell>
@@ -192,4 +168,6 @@ export default function Tickets() {
       )}
     </React.Fragment>
   );
-}
+};
+
+export default AssignByTicket;

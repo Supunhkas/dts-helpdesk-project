@@ -18,11 +18,15 @@ import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import axios from "axios";
+import PropTypes from "prop-types";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import { mainListItems, secondaryListItems } from "../pages/ListItem";
 import Cards from "./Cards";
 import Tickets from "./Tickets";
 import MainCards from "./MainCards";
+import AsigneeTicket from "../components/AsigneeTicket";
+import AssignByTicket from "../components/AssignByTicket";
 
 function Copyright(props) {
   return (
@@ -88,10 +92,49 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
+// tab panel function
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
+
 const mdTheme = createTheme();
 
 function DashboardContent() {
   const [open, setOpen] = React.useState(true);
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -173,7 +216,7 @@ function DashboardContent() {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               {/* Main cards */}
-              <Grid item xs={12} md={8} lg={9}>
+              <Grid item xs={12} md={12} lg={12}>
                 <Paper
                   sx={{
                     p: 2,
@@ -186,8 +229,8 @@ function DashboardContent() {
                   <MainCards />
                 </Paper>
               </Grid>
-              {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
+
+              {/* <Grid item xs={12} md={4} lg={3}>
                 <Paper
                   sx={{
                     p: 2,
@@ -198,11 +241,29 @@ function DashboardContent() {
                 >
                   <Cards />
                 </Paper>
-              </Grid>
+              </Grid> */}
               {/* Recent Tickets */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Tickets />
+                  <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    aria-label="basic tabs example"
+                  >
+                    <Tab label="All Tickets" {...a11yProps(0)} />
+                    <Tab label="Assignee Tickets" {...a11yProps(1)} />
+                    <Tab label="Assign By Tickets" {...a11yProps(2)} />
+                  </Tabs>
+
+                  <TabPanel value={value} index={0}>
+                    <Tickets />
+                  </TabPanel>
+                  <TabPanel value={value} index={1}>
+                    <AsigneeTicket />
+                  </TabPanel>
+                  <TabPanel value={value} index={2}>
+                    <AssignByTicket />
+                  </TabPanel>
                 </Paper>
               </Grid>
             </Grid>

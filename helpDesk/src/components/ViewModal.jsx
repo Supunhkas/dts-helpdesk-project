@@ -160,28 +160,7 @@ export default function AddModal({ show, close, rowData }) {
             style={{ marginBottom: 5, marginTop: 5, width: 400 }}
           />
           <Divider />
-          <IconButton color="primary">
-            <LocationCityIcon />
-          </IconButton>
-          <TextField
-            id="outlined-basic"
-            label="Company Id"
-            value={rowData ? rowData.companyId : ""}
-            variant="standard"
-            disabled
-            style={{ marginBottom: 5, marginTop: 5, width: 400 }}
-            InputProps={{
-              classes: {
-                disabled: "Mui-disabled",
-                input: "Mui-disabled-text",
-              },
-              disableUnderline: true,
-              style: {
-                fontWeight: "bold",
-              },
-            }}
-          />
-          <Divider />
+
           <IconButton color="primary">
             <PriorityHighIcon />
           </IconButton>

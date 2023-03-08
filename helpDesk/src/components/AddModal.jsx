@@ -30,91 +30,90 @@ import axios from "axios";
 export default function AddModal({ show, close }) {
   const handleClose = () => close();
   const [status, setStatus] = React.useState("10");
-  const [assignBy, setAssignBy] = React.useState("");
+  const [assignBy, setAssignBy] = React.useState("1");
   const [assignTo, setAssignTo] = React.useState("0");
-  // const [companyId, setCompanyId] = React.useState("0");
+  const [companyId, setCompanyId] = React.useState("1");
   const [assetId, setAssetId] = React.useState("0");
   const [description, setDescription] = React.useState("");
   const [severity, setSeverity] = React.useState("0");
   const [incedent, setIncedent] = React.useState("0");
-  const [date, setDate] = React.useState(dayjs("2023-03-03T21:11:54"));
 
   const [getStatus, setGetStatus] = React.useState([]);
   const [getSeverties, setGetSeverties] = React.useState([]);
   const [getIncedents, setGetIncedents] = React.useState([]);
   const [getAssets, setGetAssets] = React.useState([]);
   const [getUsers, setGetUsers] = React.useState([]);
+  var now = dayjs();
+  var formattedDate = now.format("YYYY/MM/DD");
 
   const submitDetails = (e) => {
-    const ticketData = {
-      status: 10,
-      createdDate: date,
-      severity: severity,
-      incident: incedent,
-      // companyId: companyId,
-      assignee: assignTo,
-      assignBy: assignBy,
-      description: description,
-      assetId: assetId,
-    };
+    e.preventDefault();
+
+    const formParams = new URLSearchParams();
+    formParams.append("statusId", 4);
+    formParams.append("createdDate", formattedDate);
+    formParams.append("severityId", severity);
+    formParams.append("incidentId", incedent);
+    formParams.append("companyId", companyId);
+    formParams.append("assigneeId", assignTo);
+    formParams.append("assignedBy", assignBy);
+    formParams.append("description", description);
+    formParams.append("assetId", assetId);
 
     axios
-      .post("http://192.168.87.174/HelpDesk/PostNewHelp", ticketData)
+      .post(
+        "http://192.168.87.174/HelpDesk/PostNewHelp",
+        formParams.toString(),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      )
       .then((res) => {
-        console.log(res);
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
+    console.log(formParams.toString());
   };
-  React.useEffect(() => {
-    axios
-      .get("http://192.168.87.174/HelpDesk/GetHelpDeskStatuses")
-      .then((res) => {
-        setGetStatus(res.data);
-        axios
-          .get("http://192.168.87.174/HelpDesk/GetHelpDeskSeverities")
-          .then((res) => {
-            setGetSeverties(res.data);
-            axios
-              .get("http://192.168.87.174/HelpDesk/GetHelpDeskIncidents")
-              .then((res) => {
-                setGetIncedents(res.data);
 
-                axios
-                  .get("http://192.168.87.174/HelpDesk/GetHelpDeskAssets")
-                  .then((res) => {
-                    setGetAssets(res.data);
-                    axios
-                      .get("http://192.168.87.174/HelpDesk/GetHelpDeskUsers")
-                      .then((res) => {
-                        setGetUsers(res.data);
-                      })
-                      .catch((err) => {
-                        console.log(err);
-                      });
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const statuses = await axios.get(
+          "http://192.168.87.174/HelpDesk/GetHelpDeskStatuses"
+        );
+        setGetStatus(statuses.data);
+        const severities = await axios.get(
+          "http://192.168.87.174/HelpDesk/GetHelpDeskSeverities"
+        );
+        setGetSeverties(severities.data);
+        const incidents = await axios.get(
+          "http://192.168.87.174/HelpDesk/GetHelpDeskIncidents"
+        );
+        setGetIncedents(incidents.data);
+        const assets = await axios.get(
+          "http://192.168.87.174/HelpDesk/GetHelpDeskAssets"
+        );
+        setGetAssets(assets.data);
+        const users = await axios.get(
+          "http://192.168.87.174/HelpDesk/GetHelpDeskUsers"
+        );
+        setGetUsers(users.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (show) {
+      fetchData();
+    }
+  }, [show]);
 
   const handeIncedent = (event) => {
     const value = event.target.value;
     setIncedent(value);
-    console.log(value);
   };
   const handeSeverity = (event) => {
     const value = event.target.value;
@@ -128,8 +127,6 @@ export default function AddModal({ show, close }) {
     const value = event.target.value;
     setAssignTo(value);
   };
-
-  // date function
 
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} size="medium">
@@ -213,12 +210,20 @@ export default function AddModal({ show, close }) {
           <IconButton color="primary">
             <CalendarMonthIcon />
           </IconButton>
+          <TextField
+            value={formattedDate}
+            label="Cretaed Date"
+            placeholder="Created Date"
+            disabled
+            style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+          />
 
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
+          {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
               label="Created Date "
-              inputFormat="DD/MM/YYYY"
-              value={date}
+              inputFormat="YYYY/MM/DD"
+              value={formattedDate}
+              disabled
               onChange={(newValue) => {
                 setDate(newValue);
               }}
@@ -229,7 +234,7 @@ export default function AddModal({ show, close }) {
                 />
               )}
             />
-          </LocalizationProvider>
+          </LocalizationProvider> */}
           <Divider />
           {/* set asset itd input field  */}
           <IconButton color="primary">
@@ -270,18 +275,18 @@ export default function AddModal({ show, close }) {
           />
           <Divider />
 
-          {/*          
           <IconButton color="primary">
             <LocationCityIcon />
           </IconButton>
           <TextField
             id="outlined-basic"
             label="Company Id"
+            disabled
             value={companyId}
             onChange={(e) => setCompanyId(e.target.value)}
             variant="standard"
             style={{ marginBottom: 5, marginTop: 5, width: 400 }}
-          /> */}
+          />
 
           <Divider />
           {/* severity select input  */}
