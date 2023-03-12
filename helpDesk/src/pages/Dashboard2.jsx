@@ -22,7 +22,6 @@ import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { mainListItems, secondaryListItems } from "../pages/ListItem";
-import Cards from "./Cards";
 import Tickets from "./Tickets";
 import MainCards from "./MainCards";
 import AsigneeTicket from "../components/AsigneeTicket";

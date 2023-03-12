@@ -11,10 +11,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Divider from "@mui/material/Divider";
 
-import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-
 import PersonIcon from "@mui/icons-material/Person";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -24,6 +20,7 @@ import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import SmsFailedIcon from "@mui/icons-material/SmsFailed";
 import PendingIcon from "@mui/icons-material/Pending";
 import { Stack } from "@mui/system";
+import { baseURL } from "../App";
 import dayjs from "dayjs";
 import axios from "axios";
 
@@ -61,15 +58,11 @@ export default function AddModal({ show, close }) {
     formParams.append("assetId", assetId);
 
     axios
-      .post(
-        "http://192.168.87.174/HelpDesk/PostNewHelp",
-        formParams.toString(),
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      )
+      .post(`${baseURL}PostNewHelp`, formParams.toString(), {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
       .then((res) => {
         console.log(res.data);
       })
@@ -82,25 +75,15 @@ export default function AddModal({ show, close }) {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const statuses = await axios.get(
-          "http://192.168.87.174/HelpDesk/GetHelpDeskStatuses"
-        );
+        const statuses = await axios.get(`${baseURL}/GetHelpDeskStatuses`);
         setGetStatus(statuses.data);
-        const severities = await axios.get(
-          "http://192.168.87.174/HelpDesk/GetHelpDeskSeverities"
-        );
+        const severities = await axios.get(`${baseURL}/GetHelpDeskSeverities`);
         setGetSeverties(severities.data);
-        const incidents = await axios.get(
-          "http://192.168.87.174/HelpDesk/GetHelpDeskIncidents"
-        );
+        const incidents = await axios.get(`${baseURL}/GetHelpDeskIncidents`);
         setGetIncedents(incidents.data);
-        const assets = await axios.get(
-          "http://192.168.87.174/HelpDesk/GetHelpDeskAssets"
-        );
+        const assets = await axios.get(`${baseURL}/GetHelpDeskAssets`);
         setGetAssets(assets.data);
-        const users = await axios.get(
-          "http://192.168.87.174/HelpDesk/GetHelpDeskUsers"
-        );
+        const users = await axios.get(`${baseURL}/GetHelpDeskUsers`);
         setGetUsers(users.data);
       } catch (error) {
         console.log(error);
@@ -218,23 +201,6 @@ export default function AddModal({ show, close }) {
             style={{ marginBottom: 5, width: 400, marginTop: 5 }}
           />
 
-          {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DesktopDatePicker
-              label="Created Date "
-              inputFormat="YYYY/MM/DD"
-              value={formattedDate}
-              disabled
-              onChange={(newValue) => {
-                setDate(newValue);
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  style={{ marginBottom: 5, marginTop: 5, width: 400 }}
-                />
-              )}
-            />
-          </LocalizationProvider> */}
           <Divider />
           {/* set asset itd input field  */}
           <IconButton color="primary">

@@ -7,27 +7,27 @@ import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import { Chip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import AddIcon from "@mui/icons-material/Add";
 import EditSharpIcon from "@mui/icons-material/EditSharp";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import Title from "../pages/Title";
-import AddModal from "./AddModal";
-import ViewModal from "./ViewModal";
-import EditModal from "./EditModal";
+import ViewUserModal from "./ViewUserModal";
 import axios from "axios";
+import EditAssignByTicket from "./EditAssignByTicket";
+import { baseURL } from "../App";
 
 const rowsPerPageOptions = [5, 10, 25];
 const AssignByTicket = () => {
   const [ticketData, setTicketData] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(rowsPerPageOptions[0]);
-  const [open, setOpen] = React.useState(false);
-  const [openVIew, setOpenView] = React.useState(false);
-  const [editVIew, setEditView] = React.useState(false);
+  const [isOpenModal, setIsOpenModal] = React.useState(false);
+  const [isModalEdit, setIsModalEdit] = React.useState(true);
+  const [ticketId, setTicketId] = React.useState("");
+
   var User_id = 2;
+
+  const [editRowData, setEditRowData] = React.useState("");
 
   const [selectedRowData, setSelectedRowData] = React.useState(null);
   const handleChangePage = (event, newPage) => {
@@ -46,10 +46,10 @@ const AssignByTicket = () => {
     console.log(ticketId);
     if (confirmMessage) {
       axios
-        .post(`http://192.168.87.174/HelpDesk/DeleteHelp?Id=${ticketId}`)
+        .post(`${baseURL}/DeleteHelp?Id=${ticketId}`)
         .then(() => {
           alert("Delete Successfully");
-          getDate();
+          getData();
         })
         .catch((err) => {
           console.log(err);
@@ -58,12 +58,12 @@ const AssignByTicket = () => {
   };
 
   React.useEffect(() => {
-    getDate();
+    getData();
   }, []);
 
-  const getDate = () => {
+  const getData = () => {
     axios
-      .get(`http://192.168.87.174/HelpDesk/GetAssignedTickets?id=${User_id}`)
+      .get(`${baseURL}/GetAssignedTickets?id=${User_id}`)
       .then((res) => {
         setTicketData(res.data);
       })
@@ -75,6 +75,15 @@ const AssignByTicket = () => {
   function viewData(rowData) {
     setSelectedRowData(rowData);
   }
+  function opendViewEdit(viewModel, ticketId) {
+    if (viewModel == "edit") {
+      setIsModalEdit(true);
+    } else {
+      setIsModalEdit(false);
+    }
+    setIsOpenModal(true);
+    setTicketId(ticketId);
+  }
   return (
     <React.Fragment>
       <Table size="small">
@@ -82,10 +91,7 @@ const AssignByTicket = () => {
           <TableRow>
             <TableCell>Ticket ID</TableCell>
             <TableCell>Status</TableCell>
-            {/* <TableCell>Assign By</TableCell> */}
-
             <TableCell>Created Date</TableCell>
-            {/* <TableCell>Company ID</TableCell> */}
             <TableCell>Description</TableCell>
             <TableCell>Asset ID</TableCell>
             <TableCell>Severity</TableCell>
@@ -118,21 +124,24 @@ const AssignByTicket = () => {
                   }
                 />
               </TableCell>
-              {/* <TableCell>{item.assignedBy}</TableCell> */}
-
               <TableCell>{item.createdDate}</TableCell>
-              {/* <TableCell>{item.companyId}</TableCell> */}
               <TableCell>{item.description}</TableCell>
               <TableCell>{item.assetId}</TableCell>
               <TableCell>{item.severity}</TableCell>
               <TableCell>{item.incident}</TableCell>
               <TableCell>
                 <Stack direction="row">
-                  <IconButton color="primary" onClick={() => viewData(item)}>
+                  <IconButton
+                    color="primary"
+                    onClick={() => opendViewEdit("view", item.ticketId)}
+                  >
                     <RemoveRedEyeIcon />
                   </IconButton>
 
-                  <IconButton color="success" onClick={() => setEditView(true)}>
+                  <IconButton
+                    color="success"
+                    onClick={() => opendViewEdit("edit", item.ticketId)}
+                  >
                     <EditSharpIcon />
                   </IconButton>
                   <IconButton
@@ -158,9 +167,14 @@ const AssignByTicket = () => {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
-      <EditModal show={editVIew} close={() => setEditView(false)} />
+      <EditAssignByTicket
+        show={isOpenModal}
+        close={() => setIsOpenModal(false)}
+        isModalEdit={isModalEdit}
+        ticketId={ticketId}
+      />
       {selectedRowData && (
-        <ViewModal
+        <ViewUserModal
           show={true}
           rowData={selectedRowData}
           close={() => setSelectedRowData(null)}

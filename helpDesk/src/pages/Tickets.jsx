@@ -52,7 +52,7 @@ export default function Tickets() {
     console.log(ticketId);
     if (confirmMessage) {
       axios
-        .post(`http://192.168.87.174/HelpDesk/DeleteHelp?Id=${ticketId}`)
+        .post(`http://192.168.248.174/HelpDesk/DeleteHelp?Id=${ticketId}`)
         .then(() => {
           alert("Delete Successfully");
           getDate();
@@ -69,7 +69,7 @@ export default function Tickets() {
 
   const getDate = () => {
     axios
-      .get("http://192.168.87.174/HelpDesk/GetDetailedHelpDeskDetails")
+      .get("http://192.168.248.174/HelpDesk/GetDetailedHelpDeskDetails")
       .then((res) => {
         setTicketData(res.data);
       })

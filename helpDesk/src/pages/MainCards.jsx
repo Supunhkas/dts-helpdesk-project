@@ -1,6 +1,5 @@
 import React from "react";
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
@@ -9,7 +8,7 @@ export default function MainCards() {
   const [cards, setCards] = React.useState([]);
   React.useEffect(() => {
     axios
-      .get("http://192.168.87.174/HelpDesk/GetDetailedHelpDeskDetails")
+      .get("http://192.168.248.174/HelpDesk/GetDetailedHelpDeskDetails")
       .then((res) => {
         setCards(res.data);
       })
