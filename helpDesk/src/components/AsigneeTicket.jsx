@@ -83,6 +83,7 @@ const AsigneeTicket = () => {
     setIsOpenModal(true);
     setTicketId(ticketId);
   }
+
   return (
     <React.Fragment>
       <Table size="small">
