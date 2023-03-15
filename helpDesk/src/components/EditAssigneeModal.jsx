@@ -47,8 +47,8 @@ export default function EditAssigneeModal(props) {
   const [getStatus, setGetStatus] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [getTicket, setGetTicket] = React.useState("");
-  const [remarks, setRemarks] = React.useState("");
   const [activity, setActivity] = React.useState("0");
+  const [remarks, setRemarks] = React.useState("");
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -66,19 +66,15 @@ export default function EditAssigneeModal(props) {
         const activities = await axios.get(`${baseURL}/GetHelpDeskActivities`);
         setGetActivities(activities.data);
 
-        const ticket = await axios.get(
-          "http://192.168.248.174/HelpDesk/GetHelpDesk?id=" + ticketId
-        );
+        const ticket = await axios.get(`${baseURL}GetHelpDesk?id=` + ticketId);
         setGetTicket(ticket.data);
         setGetSeverty(ticket.data.severityId);
-        // setActivity(ticket.data.activityId);
         setGetIncedent(ticket.data.incidentId);
         setGetAsset(ticket.data.assetId);
         setGetUser(ticket.data.assigneeId);
         setGetStatus(ticket.data.statusId);
         setDescription(ticket.data.description);
         setisLoaded(true);
-        console.log(ticket.data);
       } catch (error) {
         console.log(error);
       }
@@ -87,19 +83,47 @@ export default function EditAssigneeModal(props) {
     fetchData();
   }, [ticketId]);
 
+  const handleUpdate = (e) => {
+    e.preventDefault();
+
+    const formParams = new URLSearchParams();
+    formParams.append("statusId", getStatus);
+    formParams.append("severityId", getSeverty);
+    formParams.append("incidentId", getIncedent);
+    formParams.append("description", description);
+    formParams.append("ticketId", ticketId);
+    formParams.append("assetId", getAsset);
+    formParams.append("assigneeId", getUser);
+    formParams.append("remarks", remarks);
+    console.log(
+      getStatus,
+      getSeverty,
+      getIncedent,
+      description,
+      ticketId,
+      getAsset,
+      getUser
+    );
+
+    axios
+      .post(`${baseURL}/UpdateHelp`, formParams.toString(), {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
+      .then((res) => {
+        console.log("response", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const handleChange = (e) => {
     const value = e.target.value;
     setGetStatus(value);
   };
 
-  const hanldeUpdate = () => {
-    console.log(getStatus);
-    console.log(remarks);
-  };
-  const handleRemarksChange = (e) => {
-    const value = e.target.value;
-    setRemarks(value);
-  };
   const handeIncedent = (event) => {
     const value = event.target.value;
     setGetIncedent(value);
@@ -120,250 +144,253 @@ export default function EditAssigneeModal(props) {
     const value = event.target.value;
     setActivity(value);
   };
+  const handleRemarksChange = (e) => {
+    const value = e.target.value;
+    setRemarks(value);
+  };
+
   return (
-    <div>
-      <FormControl sx={{ m: 1, minWidth: 120 }} size="medium">
-        <Dialog open={show} onClose={handleClose}>
-          <Stack
-            display={"flex"}
-            flexDirection="row"
-            justifyContent={"space-between"}
+    <FormControl sx={{ m: 1, minWidth: 120 }} size="medium">
+      <Dialog open={show} onClose={handleClose}>
+        <Stack
+          display={"flex"}
+          flexDirection="row"
+          justifyContent={"space-between"}
+        >
+          <DialogTitle fontWeight={"bold"}> Ticket</DialogTitle>
+          <DialogTitle
+            color={"red"}
+            fontWeight={"bold"}
+            onClick={handleClose}
+            style={{ cursor: "pointer" }}
           >
-            <DialogTitle fontWeight={"bold"}>Update Ticket</DialogTitle>
-            <DialogTitle
-              color={"red"}
-              fontWeight={"bold"}
-              onClick={handleClose}
-              style={{ cursor: "pointer" }}
-            >
-              X
-            </DialogTitle>
-          </Stack>
+            X
+          </DialogTitle>
+        </Stack>
+        <Divider />
+
+        <DialogContent>
+          <IconButton color="primary">
+            <PendingIcon />
+          </IconButton>
+          <Select
+            id="statusSelect"
+            value={getStatus}
+            variant="standard"
+            placeholder="status"
+            onChange={handleChange}
+            label="Status"
+            disabled={!isModalEdit}
+            style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+          >
+            {getStatuses.map((item) => (
+              <MenuItem value={item.Id} key={item.Id}>
+                {item.Description}
+              </MenuItem>
+            ))}
+          </Select>
+          <Divider />
+          {/* input activites  */}
+          {isModalEdit ? (
+            <>
+              <IconButton color="primary">
+                <SupervisorAccountIcon />
+              </IconButton>
+              <FormControl>
+                <Select
+                  id="activitySelect"
+                  value={activity}
+                  variant="standard"
+                  placeholder="Activity"
+                  label="Activity"
+                  disabled={!isModalEdit}
+                  style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+                  onChange={handleActivity}
+                >
+                  <MenuItem value="0">-- Select Activity --</MenuItem>
+                  {getActivities.length > 0 &&
+                    getActivities.map((item) => (
+                      <MenuItem key={item.Id} value={item.Id}>
+                        {item.Description}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </>
+          ) : null}
+
+          <Divider />
+          {/* remarks input  */}
+          {isModalEdit ? (
+            <>
+              <IconButton color="primary">
+                <PersonIcon />
+              </IconButton>
+              <TextField
+                id="outlined-basic"
+                label="Remarks"
+                variant="standard"
+                value={remarks}
+                disabled={!isModalEdit}
+                onChange={handleRemarksChange}
+                style={{ marginBottom: 5, marginTop: 5, width: 400 }}
+              />
+            </>
+          ) : null}
+
           <Divider />
 
-          <DialogContent>
-            <IconButton color="primary">
-              <PendingIcon />
-            </IconButton>
+          {/* assign by input  */}
+          <IconButton color="primary">
+            <PersonIcon />
+          </IconButton>
+          <TextField
+            id="outlined-basic"
+            label="Assign By"
+            value={assignBy}
+            disabled
+            onChange={(e) => setAssignBy(e.target.value)}
+            variant="standard"
+            style={{ marginBottom: 5, marginTop: 5, width: 400 }}
+          />
+          <Divider />
+          {/* assign to input  */}
+          <IconButton color="primary">
+            <SupervisorAccountIcon />
+          </IconButton>
+          <FormControl>
             <Select
-              id="statusSelect"
-              value={getStatus}
+              id="assigneSelect"
+              value={getUser}
               variant="standard"
-              placeholder="status"
-              onChange={handleChange}
-              label="Status"
-              disabled={!isModalEdit}
+              placeholder="Assign To"
+              label="Assign To"
+              disabled
               style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+              onChange={handleAssignee}
             >
-              {getStatuses.map((item) => (
-                <MenuItem value={item.Id} key={item.Id}>
-                  {item.Description}
-                </MenuItem>
-              ))}
+              <MenuItem value="0">-- Select User --</MenuItem>
+              {getUsers.length > 0 &&
+                getUsers.map((item) => (
+                  <MenuItem key={item.User_id} value={item.User_id}>
+                    {item.user_name}
+                  </MenuItem>
+                ))}
             </Select>
-            <Divider />
-            {/* remarks input  */}
+          </FormControl>
 
-            {isModalEdit ? (
-              <>
-                <IconButton color="primary">
-                  <PersonIcon />
-                </IconButton>
-                <TextField
-                  id="outlined-basic"
-                  label="Remarks"
-                  variant="standard"
-                  value={remarks}
-                  disabled={!isModalEdit}
-                  onChange={handleRemarksChange}
-                  style={{ marginBottom: 5, marginTop: 5, width: 400 }}
-                />
-              </>
-            ) : null}
-
-            <Divider />
-
-            {/* input activites  */}
-            {isModalEdit ? (
-              <>
-                <IconButton color="primary">
-                  <SupervisorAccountIcon />
-                </IconButton>
-                <FormControl>
-                  <Select
-                    id="activitySelect"
-                    value={activity}
-                    variant="standard"
-                    placeholder="Activity"
-                    label="Activity"
-                    disabled={!isModalEdit}
-                    style={{ marginBottom: 5, width: 400, marginTop: 5 }}
-                    onChange={handleActivity}
-                  >
-                    <MenuItem value="0">-- Select Activity --</MenuItem>
-                    {getActivities.length > 0 &&
-                      getActivities.map((item) => (
-                        <MenuItem key={item.Id} value={item.id}>
-                          {item.Description}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
-              </>
-            ) : null}
-
-            <Divider />
-            {/* assign by input  */}
-            <IconButton color="primary">
-              <PersonIcon />
-            </IconButton>
-            <TextField
-              id="outlined-basic"
-              label="Assign By"
-              value={assignBy}
-              disabled
-              onChange={(e) => setAssignBy(e.target.value)}
+          <Divider />
+          {/* create date input  */}
+          <IconButton color="primary">
+            <CalendarMonthIcon />
+          </IconButton>
+          <TextField
+            value={formattedDate}
+            label="Cretaed Date"
+            placeholder="Created Date"
+            disabled
+            style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+          />
+          <Divider />
+          {/* set asset itd input field  */}
+          <IconButton color="primary">
+            <CorporateFareIcon />
+          </IconButton>
+          <FormControl>
+            <Select
+              id="assetIdSelect"
+              value={getAsset}
               variant="standard"
-              style={{ marginBottom: 5, marginTop: 5, width: 400 }}
-            />
-            <Divider />
-            {/* assign to input  */}
-            <IconButton color="primary">
-              <SupervisorAccountIcon />
-            </IconButton>
-            <FormControl>
-              <Select
-                id="assigneSelect"
-                value={getUser}
-                variant="standard"
-                placeholder="Assign To"
-                label="Assign To"
-                disabled
-                style={{ marginBottom: 5, width: 400, marginTop: 5 }}
-                onChange={handleAssignee}
-              >
-                <MenuItem value="0">-- Select User --</MenuItem>
-                {getUsers.length > 0 &&
-                  getUsers.map((item) => (
-                    <MenuItem key={item.User_id} value={item.User_id}>
-                      {item.user_name}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-
-            <Divider />
-            {/* create date input  */}
-            <IconButton color="primary">
-              <CalendarMonthIcon />
-            </IconButton>
-            <TextField
-              value={formattedDate}
-              label="Cretaed Date"
-              placeholder="Created Date"
+              placeholder="Asset ID"
+              label="Asset ID"
               disabled
               style={{ marginBottom: 5, width: 400, marginTop: 5 }}
-            />
-            <Divider />
-            {/* set asset itd input field  */}
-            <IconButton color="primary">
-              <CorporateFareIcon />
-            </IconButton>
-            <FormControl>
-              <Select
-                id="assetIdSelect"
-                value={getAsset}
-                variant="standard"
-                placeholder="Asset ID"
-                label="Asset ID"
-                disabled
-                style={{ marginBottom: 5, width: 400, marginTop: 5 }}
-                onChange={handleAssetId}
-              >
-                <MenuItem value="0">-- Select handleAssetId --</MenuItem>
-                {getAssets.length > 0 &&
-                  getAssets.map((item) => (
-                    <MenuItem key={item.asset_id} value={item.asset_id}>
-                      {item.asset_name}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-            <Divider />
-            <IconButton color="primary">
-              <CorporateFareIcon />
-            </IconButton>
-            <TextField
-              id="outlined-basic"
-              label="Description"
-              value={description}
+              onChange={handleAssetId}
+            >
+              <MenuItem value="0">-- Select handleAssetId --</MenuItem>
+              {getAssets.length > 0 &&
+                getAssets.map((item) => (
+                  <MenuItem key={item.asset_id} value={item.asset_id}>
+                    {item.asset_name}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+          <Divider />
+          <IconButton color="primary">
+            <CorporateFareIcon />
+          </IconButton>
+          <TextField
+            id="outlined-basic"
+            label="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            variant="standard"
+            disabled
+            style={{ marginBottom: 5, marginTop: 5, width: 400 }}
+          />
+          <Divider />
+
+          <IconButton color="primary">
+            <PriorityHighIcon />
+          </IconButton>
+          <FormControl>
+            <Select
+              id="severitySelect"
+              value={getSeverty}
               variant="standard"
+              placeholder="Severity"
+              label="Severity"
               disabled
-              style={{ marginBottom: 5, marginTop: 5, width: 400 }}
-            />
-            <Divider />
+              style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+              onChange={handeSeverity}
+            >
+              <MenuItem value="0">-- Select getSeverties --</MenuItem>
+              {getSeverties.length > 0 &&
+                getSeverties.map((item) => (
+                  <MenuItem key={item.Id} value={item.Id}>
+                    {item.Description}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+          <Divider />
+          {/* incedent selet input  */}
+          <IconButton color="primary">
+            <SmsFailedIcon />
+          </IconButton>
+          <FormControl>
+            <Select
+              id="incedentSelect"
+              value={getIncedent}
+              variant="standard"
+              placeholder="Incident"
+              label="Incident"
+              disabled
+              style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+              onChange={handeIncedent}
+            >
+              <MenuItem value="0">-- Select an incident --</MenuItem>
+              {getIncedents.length > 0 &&
+                getIncedents.map((item) => (
+                  <MenuItem key={item.Id} value={item.Id}>
+                    {item.Description}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+          <Divider />
+        </DialogContent>
 
-            <IconButton color="primary">
-              <PriorityHighIcon />
-            </IconButton>
-            <FormControl>
-              <Select
-                id="severitySelect"
-                value={getSeverty}
-                variant="standard"
-                placeholder="Severity"
-                label="Severity"
-                disabled
-                style={{ marginBottom: 5, width: 400, marginTop: 5 }}
-                onChange={handeSeverity}
-              >
-                <MenuItem value="0">-- Select getSeverties --</MenuItem>
-                {getSeverties.length > 0 &&
-                  getSeverties.map((item) => (
-                    <MenuItem key={item.Id} value={item.Id}>
-                      {item.Description}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-            <Divider />
-            {/* incedent selet input  */}
-            <IconButton color="primary">
-              <SmsFailedIcon />
-            </IconButton>
-            <FormControl>
-              <Select
-                id="incedentSelect"
-                value={getIncedent}
-                variant="standard"
-                placeholder="Incident"
-                label="Incident"
-                disabled
-                style={{ marginBottom: 5, width: 400, marginTop: 5 }}
-                onChange={handeIncedent}
-              >
-                <MenuItem value="0">-- Select an incident --</MenuItem>
-                {getIncedents.length > 0 &&
-                  getIncedents.map((item) => (
-                    <MenuItem key={item.Id} value={item.Id}>
-                      {item.Description}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-            <Divider />
-          </DialogContent>
-
-          <DialogActions style={{ marginBottom: 10 }}>
-            <Button variant="contained" color="error" onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button variant="contained" color="success" onClick={hanldeUpdate}>
-              Update
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </FormControl>
-    </div>
+        <DialogActions style={{ marginBottom: 10 }}>
+          <Button variant="contained" color="error" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="contained" color="success" onClick={handleUpdate}>
+            Update
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </FormControl>
   );
 }

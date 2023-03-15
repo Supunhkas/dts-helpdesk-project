@@ -75,8 +75,8 @@ const AssignByTicket = () => {
   function viewData(rowData) {
     setSelectedRowData(rowData);
   }
-  function opendViewEdit(viewModel, ticketId) {
-    if (viewModel == "edit") {
+  function opendViewEdit(viewModel, ticketId, status) {
+    if (viewModel == "edit" && status == 4) {
       setIsModalEdit(true);
     } else {
       setIsModalEdit(false);
@@ -84,6 +84,7 @@ const AssignByTicket = () => {
     setIsOpenModal(true);
     setTicketId(ticketId);
   }
+  console.log(ticketData);
   return (
     <React.Fragment>
       <Table size="small">
@@ -114,7 +115,7 @@ const AssignByTicket = () => {
                 <Chip
                   label={item.status}
                   className="chip"
-                  style={{ width: 80 }}
+                  style={{ width: 90 }}
                   color={
                     item.status === "Complete"
                       ? "success"
@@ -133,7 +134,9 @@ const AssignByTicket = () => {
                 <Stack direction="row">
                   <IconButton
                     color="primary"
-                    onClick={() => opendViewEdit("view", item.ticketId)}
+                    onClick={() =>
+                      opendViewEdit("view", item.ticketId, item.status)
+                    }
                   >
                     <RemoveRedEyeIcon />
                   </IconButton>

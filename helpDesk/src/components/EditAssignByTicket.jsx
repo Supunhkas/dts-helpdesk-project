@@ -27,7 +27,6 @@ import axios from "axios";
 export default function EditAssignByTicket({
   show,
   close,
-  rowData,
   ticketId,
   isModalEdit,
 }) {
@@ -50,7 +49,6 @@ export default function EditAssignByTicket({
   const [getStatus, setGetStatus] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [getTicket, setGetTicket] = React.useState("");
-  const [remarks, setRemarks] = React.useState("");
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -65,9 +63,8 @@ export default function EditAssignByTicket({
         setGetAssets(assets.data);
         const users = await axios.get(`${baseURL}/GetHelpDeskUsers`);
         setGetUsers(users.data);
-        const ticket = await axios.get(
-          "http://192.168.248.174/HelpDesk/GetHelpDesk?id=" + ticketId
-        );
+
+        const ticket = await axios.get(`${baseURL}GetHelpDesk?id=` + ticketId);
         setGetTicket(ticket.data);
         setGetSeverty(ticket.data.severityId);
         setGetIncedent(ticket.data.incidentId);
@@ -76,6 +73,7 @@ export default function EditAssignByTicket({
         setGetStatus(ticket.data.statusId);
         setDescription(ticket.data.description);
         setisLoaded(true);
+        console.log(ticket.data);
       } catch (error) {
         console.log(error);
       }
@@ -89,22 +87,19 @@ export default function EditAssignByTicket({
 
     const formParams = new URLSearchParams();
     formParams.append("statusId", getStatus);
-    formParams.append("createdDate", formattedDate);
-    formParams.append("activityId", getSeverty);
     formParams.append("ticketId", ticketId);
-    formParams.append("userId", getUser);
-    formParams.append("remarks", remarks);
+    formParams.append("assigneeId", getUser);
+    formParams.append("severityId", getSeverty);
+    formParams.append("incidentId", getIncedent);
+    formParams.append("description", description);
+    formParams.append("assetId", getAsset);
 
     axios
-      .post(
-        "http://192.168.248.174/HelpDesk/PostTicketLog",
-        formParams.toString(),
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      )
+      .post(`${baseURL}/UpdateHelp`, formParams.toString(), {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
       .then((res) => {
         console.log("response", res.data);
       })
@@ -118,10 +113,6 @@ export default function EditAssignByTicket({
     setGetStatus(value);
   };
 
-  const handleRemarksChange = (e) => {
-    const value = e.target.value;
-    setRemarks(value);
-  };
   const handeIncedent = (event) => {
     const value = event.target.value;
     setGetIncedent(value);
@@ -138,6 +129,7 @@ export default function EditAssignByTicket({
     const value = event.target.value;
     setGetUser(value);
   };
+
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} size="medium">
       <Dialog open={show} onClose={handleClose}>
@@ -179,25 +171,7 @@ export default function EditAssignByTicket({
             ))}
           </Select>
           <Divider />
-          {/* remarks input  */}
-          {isModalEdit ? (
-            <>
-              <IconButton color="primary">
-                <PersonIcon />
-              </IconButton>
-              <TextField
-                id="outlined-basic"
-                label="Remarks"
-                variant="standard"
-                value={remarks}
-                disabled={!isModalEdit}
-                onChange={handleRemarksChange}
-                style={{ marginBottom: 5, marginTop: 5, width: 400 }}
-              />
-            </>
-          ) : null}
 
-          <Divider />
           {/* assign by input  */}
           <IconButton color="primary">
             <PersonIcon />
@@ -261,7 +235,7 @@ export default function EditAssignByTicket({
               variant="standard"
               placeholder="Asset ID"
               label="Asset ID"
-              disabled
+              disabled={!isModalEdit}
               style={{ marginBottom: 5, width: 400, marginTop: 5 }}
               onChange={handleAssetId}
             >
@@ -281,10 +255,9 @@ export default function EditAssignByTicket({
           <TextField
             id="outlined-basic"
             label="Description"
-            value={description}
+            disabled={!isModalEdit}
             onChange={(e) => setDescription(e.target.value)}
             variant="standard"
-            disabled
             style={{ marginBottom: 5, marginTop: 5, width: 400 }}
           />
           <Divider />
@@ -299,7 +272,7 @@ export default function EditAssignByTicket({
               variant="standard"
               placeholder="Severity"
               label="Severity"
-              disabled
+              disabled={!isModalEdit}
               style={{ marginBottom: 5, width: 400, marginTop: 5 }}
               onChange={handeSeverity}
             >
@@ -324,7 +297,7 @@ export default function EditAssignByTicket({
               variant="standard"
               placeholder="Incident"
               label="Incident"
-              disabled
+              disabled={!isModalEdit}
               style={{ marginBottom: 5, width: 400, marginTop: 5 }}
               onChange={handeIncedent}
             >

@@ -21,6 +21,7 @@ import "./tickets.css";
 import AddModal from "../components/AddModal";
 import ViewModal from "../components/ViewModal";
 import EditModal from "../components/EditModal";
+import { baseURL } from "../App";
 
 function preventDefault(event) {
   event.preventDefault();
@@ -52,7 +53,7 @@ export default function Tickets() {
     console.log(ticketId);
     if (confirmMessage) {
       axios
-        .post(`http://192.168.248.174/HelpDesk/DeleteHelp?Id=${ticketId}`)
+        .post(`${baseURL}/DeleteHelp?Id=${ticketId}`)
         .then(() => {
           alert("Delete Successfully");
           getDate();
@@ -69,7 +70,7 @@ export default function Tickets() {
 
   const getDate = () => {
     axios
-      .get("http://192.168.248.174/HelpDesk/GetDetailedHelpDeskDetails")
+      .get(`${baseURL}GetDetailedHelpDeskDetails`)
       .then((res) => {
         setTicketData(res.data);
       })
@@ -109,7 +110,6 @@ export default function Tickets() {
             <TableCell>Assign By</TableCell>
             <TableCell>Assign To</TableCell>
             <TableCell>Created Date</TableCell>
-            {/* <TableCell>Company ID</TableCell> */}
             <TableCell>Description</TableCell>
             <TableCell>Asset ID</TableCell>
             <TableCell>Severity</TableCell>
@@ -132,7 +132,7 @@ export default function Tickets() {
                 <Chip
                   label={item.status}
                   className="chip"
-                  style={{ width: 80 }}
+                  style={{ width: 90 }}
                   color={
                     item.status === "Complete"
                       ? "success"
@@ -145,7 +145,6 @@ export default function Tickets() {
               <TableCell>{item.assignedBy}</TableCell>
               <TableCell>{item.assignee}</TableCell>
               <TableCell>{item.createdDate}</TableCell>
-              {/* <TableCell>{item.companyId}</TableCell> */}
               <TableCell>{item.description}</TableCell>
               <TableCell>{item.assetId}</TableCell>
               <TableCell>{item.severity}</TableCell>
@@ -156,7 +155,7 @@ export default function Tickets() {
                     <RemoveRedEyeIcon />
                   </IconButton>
 
-                  <IconButton color="success" onClick={() => setEditView(true)}>
+                  {/* <IconButton color="success" onClick={() => setEditView(true)}>
                     <EditSharpIcon />
                   </IconButton>
                   <IconButton
@@ -164,7 +163,7 @@ export default function Tickets() {
                     onClick={() => deleteRow(item.ticketId)}
                   >
                     <DeleteIcon />
-                  </IconButton>
+                  </IconButton> */}
                 </Stack>
               </TableCell>
             </TableRow>

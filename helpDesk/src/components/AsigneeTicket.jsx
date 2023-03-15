@@ -26,6 +26,7 @@ const AsigneeTicket = () => {
   const [ticketId, setTicketId] = React.useState("");
 
   var User_id = 2;
+  let assignee;
 
   const [selectedRowData, setSelectedRowData] = React.useState(null);
   const handleChangePage = (event, newPage) => {
@@ -36,8 +37,6 @@ const AsigneeTicket = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  // const emptyRows =
-  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ticketData.length) : 0;
 
   const deleteRow = (ticketId) => {
     const confirmMessage = window.confirm("Are youu sure?");
@@ -114,7 +113,7 @@ const AsigneeTicket = () => {
                 <Chip
                   label={item.status}
                   className="chip"
-                  style={{ width: 80 }}
+                  style={{ width: 90 }}
                   color={
                     item.status === "Complete"
                       ? "success"

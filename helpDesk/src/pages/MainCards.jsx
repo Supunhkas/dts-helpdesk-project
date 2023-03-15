@@ -3,12 +3,13 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
+import { baseURL } from "../App";
 
 export default function MainCards() {
   const [cards, setCards] = React.useState([]);
   React.useEffect(() => {
     axios
-      .get("http://192.168.248.174/HelpDesk/GetDetailedHelpDeskDetails")
+      .get(`${baseURL}GetDetailedHelpDeskDetails`)
       .then((res) => {
         setCards(res.data);
       })
