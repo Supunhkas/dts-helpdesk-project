@@ -33,6 +33,7 @@ const Ticketlog = ({ show, close, ticketId }) => {
     function getlogs() {
       axios
         .get(`${baseURL}/GetDetailsLog?id=${ticketId}`)
+        .header({ "X-My-Secret-Token": "jjjjj" })
         .then((res) => {
           setTicketLog(res.data);
         })

@@ -1,7 +1,6 @@
 import React from "react";
 import "rsuite/dist/rsuite.min.css";
 import Dashboard2 from "./pages/Dashboard2";
-import Ticketlog from "./components/Ticketlog";
 import Login from "./pages/Login";
 
 const App = () => {
