@@ -10,6 +10,9 @@ import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Divider from "@mui/material/Divider";
+import { InputLabel } from "@mui/material";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import PersonIcon from "@mui/icons-material/Person";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
@@ -70,6 +73,8 @@ export default function AddModal({ show, close }) {
         console.log(err);
       });
     console.log(formParams.toString());
+    showToastMessage();
+    handleClose();
   };
 
   React.useEffect(() => {
@@ -111,8 +116,15 @@ export default function AddModal({ show, close }) {
     setAssignTo(value);
   };
 
+  const showToastMessage = () => {
+    toast.success("Add Ticket Successfully. ", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 1500,
+    });
+  };
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} size="medium">
+      <ToastContainer />
       <Dialog open={show} onClose={handleClose}>
         <Stack
           display={"flex"}
@@ -135,21 +147,22 @@ export default function AddModal({ show, close }) {
           <IconButton color="primary">
             <PendingIcon />
           </IconButton>
-          <Select
-            id="statusSelect"
-            value={status}
+          <FormControl
             variant="standard"
-            placeholder="status"
-            label="Status"
-            disabled
-            displayEmpty
             style={{ marginBottom: 5, width: 400, marginTop: 5 }}
           >
-            <MenuItem value="">Select status</MenuItem>
-            <MenuItem value={10}>New</MenuItem>
-          </Select>
+            <InputLabel shrink id="statusSelect">
+              Status
+            </InputLabel>
+            <Select labelId="statusSelect" value={status} disabled>
+              <MenuItem value="">Select status</MenuItem>
+              <MenuItem value={10}>New</MenuItem>
+            </Select>
+          </FormControl>
           <Divider />
+
           {/* assign By input  */}
+
           <IconButton color="primary">
             <PersonIcon />
           </IconButton>
@@ -157,6 +170,7 @@ export default function AddModal({ show, close }) {
             id="outlined-basic"
             label="Assign By"
             value={assignBy}
+            disabled
             onChange={(e) => setAssignBy(e.target.value)}
             variant="standard"
             style={{ marginBottom: 5, marginTop: 5, width: 400 }}
@@ -167,14 +181,16 @@ export default function AddModal({ show, close }) {
             <SupervisorAccountIcon />
           </IconButton>
 
-          <FormControl>
+          <FormControl
+            variant="standard"
+            style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+          >
+            <InputLabel shrink id="assigneSelect">
+              Assign To
+            </InputLabel>
             <Select
-              id="assigneSelect"
+              labelId="assigneSelect"
               value={assignTo}
-              variant="standard"
-              placeholder="Assign To"
-              label="Assign To"
-              style={{ marginBottom: 5, width: 400, marginTop: 5 }}
               onChange={handleAssignee}
             >
               <MenuItem value="0">-- Select User --</MenuItem>
@@ -197,6 +213,7 @@ export default function AddModal({ show, close }) {
             value={formattedDate}
             label="Cretaed Date"
             placeholder="Created Date"
+            variant="standard"
             disabled
             style={{ marginBottom: 5, width: 400, marginTop: 5 }}
           />
@@ -207,14 +224,16 @@ export default function AddModal({ show, close }) {
             <CorporateFareIcon />
           </IconButton>
 
-          <FormControl>
+          <FormControl
+            variant="standard"
+            style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+          >
+            <InputLabel shrink id="assetIdSelect">
+              Asset ID
+            </InputLabel>
             <Select
-              id="assetIdSelect"
+              labelId="assetIdSelect"
               value={assetId}
-              variant="standard"
-              placeholder="Asset ID"
-              label="Asset ID"
-              style={{ marginBottom: 5, width: 400, marginTop: 5 }}
               onChange={handleAssetId}
             >
               <MenuItem value="0">-- Select handleAssetId --</MenuItem>
@@ -260,14 +279,16 @@ export default function AddModal({ show, close }) {
             <PriorityHighIcon />
           </IconButton>
 
-          <FormControl>
+          <FormControl
+            variant="standard"
+            style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+          >
+            <InputLabel shrink id="severitySelect">
+              Severity
+            </InputLabel>
             <Select
-              id="severitySelect"
+              labelId="severitySelect"
               value={severity}
-              variant="standard"
-              placeholder="Severity"
-              label="Severity"
-              style={{ marginBottom: 5, width: 400, marginTop: 5 }}
               onChange={handeSeverity}
             >
               <MenuItem value="0">-- Select getSeverties --</MenuItem>
@@ -286,14 +307,18 @@ export default function AddModal({ show, close }) {
           <IconButton color="primary">
             <SmsFailedIcon />
           </IconButton>
-          <FormControl>
+
+          <FormControl
+            variant="standard"
+            style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+          >
+            <InputLabel shrink id="incedentSelect">
+              Incident
+            </InputLabel>
             <Select
-              id="incedentSelect"
+              labelId="incedentSelect"
               value={incedent}
-              variant="standard"
-              placeholder="Incident"
               label="Incident"
-              style={{ marginBottom: 5, width: 400, marginTop: 5 }}
               onChange={handeIncedent}
             >
               <MenuItem value="0">-- Select an incident --</MenuItem>

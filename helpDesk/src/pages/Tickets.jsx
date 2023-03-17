@@ -50,7 +50,7 @@ export default function Tickets() {
 
   const deleteRow = (ticketId) => {
     const confirmMessage = window.confirm("Are youu sure?");
-    console.log(ticketId);
+
     if (confirmMessage) {
       axios
         .post(`${baseURL}/DeleteHelp?Id=${ticketId}`)

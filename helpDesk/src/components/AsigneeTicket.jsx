@@ -13,6 +13,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import ViewUserModal from "./ViewUserModal";
 import EditAssigneeModal from "./EditAssigneeModal";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { baseURL } from "../App";
 
@@ -26,7 +28,6 @@ const AsigneeTicket = () => {
   const [ticketId, setTicketId] = React.useState("");
 
   var User_id = 2;
-  let assignee;
 
   const [selectedRowData, setSelectedRowData] = React.useState(null);
   const handleChangePage = (event, newPage) => {
@@ -74,7 +75,12 @@ const AsigneeTicket = () => {
   }
 
   function opendViewEdit(viewModel, ticketId) {
-    if (viewModel == "edit") {
+    const ticket = ticketData.find((item) => item.ticketId === ticketId);
+    if (viewModel === "edit" && ticket.status === "Complete") {
+      showError();
+      return;
+    }
+    if (viewModel === "edit") {
       setIsModalEdit(true);
     } else {
       setIsModalEdit(false);
@@ -82,9 +88,15 @@ const AsigneeTicket = () => {
     setIsOpenModal(true);
     setTicketId(ticketId);
   }
-
+  const showError = () => {
+    toast.error("You cannot edit this Ticket!! ", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 2000,
+    });
+  };
   return (
     <React.Fragment>
+      <ToastContainer />
       <Table size="small">
         <TableHead>
           <TableRow>

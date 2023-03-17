@@ -5,13 +5,15 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
-import { Chip } from "@mui/material";
+import { Chip, Button } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import EditSharpIcon from "@mui/icons-material/EditSharp";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import ViewUserModal from "./ViewUserModal";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import EditAssignByTicket from "./EditAssignByTicket";
 import { baseURL } from "../App";
@@ -43,7 +45,7 @@ const AssignByTicket = () => {
 
   const deleteRow = (ticketId) => {
     const confirmMessage = window.confirm("Are youu sure?");
-    console.log(ticketId);
+
     if (confirmMessage) {
       axios
         .post(`${baseURL}/DeleteHelp?Id=${ticketId}`)
@@ -75,8 +77,13 @@ const AssignByTicket = () => {
   function viewData(rowData) {
     setSelectedRowData(rowData);
   }
-  function opendViewEdit(viewModel, ticketId, status) {
-    if (viewModel == "edit" && status == 4) {
+  function opendViewEdit(viewModel, ticketId) {
+    const ticket = ticketData.find((item) => item.ticketId === ticketId);
+    if (viewModel === "edit" && ticket.status != "New") {
+      showError();
+      return;
+    }
+    if (viewModel === "edit") {
       setIsModalEdit(true);
     } else {
       setIsModalEdit(false);
@@ -84,9 +91,15 @@ const AssignByTicket = () => {
     setIsOpenModal(true);
     setTicketId(ticketId);
   }
-  console.log(ticketData);
+  const showError = () => {
+    toast.error("You cannot edit this Ticket!! ", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 2000,
+    });
+  };
   return (
     <React.Fragment>
+      <ToastContainer />
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -134,9 +147,7 @@ const AssignByTicket = () => {
                 <Stack direction="row">
                   <IconButton
                     color="primary"
-                    onClick={() =>
-                      opendViewEdit("view", item.ticketId, item.status)
-                    }
+                    onClick={() => opendViewEdit("view", item.ticketId)}
                   >
                     <RemoveRedEyeIcon />
                   </IconButton>

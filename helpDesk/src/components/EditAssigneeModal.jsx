@@ -10,7 +10,9 @@ import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Divider from "@mui/material/Divider";
-
+import { InputLabel } from "@mui/material";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import PersonIcon from "@mui/icons-material/Person";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -53,28 +55,36 @@ export default function EditAssigneeModal(props) {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const statuses = await axios.get(`${baseURL}/GetHelpDeskStatuses`);
-        setGetStatuses(statuses.data);
-        const severities = await axios.get(`${baseURL}/GetHelpDeskSeverities`);
-        setGetSeverties(severities.data);
-        const incidents = await axios.get(`${baseURL}/GetHelpDeskIncidents`);
-        setGetIncedents(incidents.data);
-        const assets = await axios.get(`${baseURL}/GetHelpDeskAssets`);
-        setGetAssets(assets.data);
-        const users = await axios.get(`${baseURL}/GetHelpDeskUsers`);
-        setGetUsers(users.data);
-        const activities = await axios.get(`${baseURL}/GetHelpDeskActivities`);
-        setGetActivities(activities.data);
+        if (show) {
+          const statuses = await axios.get(`${baseURL}/GetHelpDeskStatuses`);
+          setGetStatuses(statuses.data);
+          const severities = await axios.get(
+            `${baseURL}/GetHelpDeskSeverities`
+          );
+          setGetSeverties(severities.data);
+          const incidents = await axios.get(`${baseURL}/GetHelpDeskIncidents`);
+          setGetIncedents(incidents.data);
+          const assets = await axios.get(`${baseURL}/GetHelpDeskAssets`);
+          setGetAssets(assets.data);
+          const users = await axios.get(`${baseURL}/GetHelpDeskUsers`);
+          setGetUsers(users.data);
+          const activities = await axios.get(
+            `${baseURL}/GetHelpDeskActivities`
+          );
+          setGetActivities(activities.data);
 
-        const ticket = await axios.get(`${baseURL}GetHelpDesk?id=` + ticketId);
-        setGetTicket(ticket.data);
-        setGetSeverty(ticket.data.severityId);
-        setGetIncedent(ticket.data.incidentId);
-        setGetAsset(ticket.data.assetId);
-        setGetUser(ticket.data.assigneeId);
-        setGetStatus(ticket.data.statusId);
-        setDescription(ticket.data.description);
-        setisLoaded(true);
+          const ticket = await axios.get(
+            `${baseURL}GetHelpDesk?id=` + ticketId
+          );
+          setGetTicket(ticket.data);
+          setGetSeverty(ticket.data.severityId);
+          setGetIncedent(ticket.data.incidentId);
+          setGetAsset(ticket.data.assetId);
+          setGetUser(ticket.data.assigneeId);
+          setGetStatus(ticket.data.statusId);
+          setDescription(ticket.data.description);
+          setisLoaded(true);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -95,15 +105,6 @@ export default function EditAssigneeModal(props) {
     formParams.append("assetId", getAsset);
     formParams.append("assigneeId", getUser);
     formParams.append("remarks", remarks);
-    console.log(
-      getStatus,
-      getSeverty,
-      getIncedent,
-      description,
-      ticketId,
-      getAsset,
-      getUser
-    );
 
     axios
       .post(`${baseURL}/UpdateHelp`, formParams.toString(), {
@@ -117,6 +118,8 @@ export default function EditAssigneeModal(props) {
       .catch((err) => {
         console.log(err);
       });
+    showToastMessage();
+    handleClose();
   };
 
   const handleChange = (e) => {
@@ -148,9 +151,15 @@ export default function EditAssigneeModal(props) {
     const value = e.target.value;
     setRemarks(value);
   };
-
+  const showToastMessage = () => {
+    toast.success("Update Ticket Successfully. ", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 1500,
+    });
+  };
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} size="medium">
+      <ToastContainer />
       <Dialog open={show} onClose={handleClose}>
         <Stack
           display={"flex"}
@@ -173,38 +182,45 @@ export default function EditAssigneeModal(props) {
           <IconButton color="primary">
             <PendingIcon />
           </IconButton>
-          <Select
-            id="statusSelect"
-            value={getStatus}
+          <FormControl
             variant="standard"
-            placeholder="status"
-            onChange={handleChange}
-            label="Status"
-            disabled={!isModalEdit}
-            style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+            style={{ marginBottom: 15, width: 400, marginTop: 5 }}
           >
-            {getStatuses.map((item) => (
-              <MenuItem value={item.Id} key={item.Id}>
-                {item.Description}
-              </MenuItem>
-            ))}
-          </Select>
+            <InputLabel shrink id="statusSelect">
+              Status
+            </InputLabel>
+            <Select
+              labelId="statusSelect"
+              value={getStatus}
+              onChange={handleChange}
+              disabled={!isModalEdit}
+            >
+              {getStatuses.map((item) => (
+                <MenuItem value={item.Id} key={item.Id}>
+                  {item.Description}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <Divider />
           {/* input activites  */}
+
           {isModalEdit ? (
             <>
               <IconButton color="primary">
                 <SupervisorAccountIcon />
               </IconButton>
-              <FormControl>
+              <FormControl
+                variant="standard"
+                style={{ marginBottom: 15, width: 400, marginTop: 5 }}
+              >
+                <InputLabel shrink id="activitySelect">
+                  Activity
+                </InputLabel>
                 <Select
-                  id="activitySelect"
+                  labelId="activitySelect"
                   value={activity}
-                  variant="standard"
-                  placeholder="Activity"
-                  label="Activity"
                   disabled={!isModalEdit}
-                  style={{ marginBottom: 5, width: 400, marginTop: 5 }}
                   onChange={handleActivity}
                 >
                   <MenuItem value="0">-- Select Activity --</MenuItem>
@@ -241,6 +257,7 @@ export default function EditAssigneeModal(props) {
           <Divider />
 
           {/* assign by input  */}
+
           <IconButton color="primary">
             <PersonIcon />
           </IconButton>
@@ -248,25 +265,29 @@ export default function EditAssigneeModal(props) {
             id="outlined-basic"
             label="Assign By"
             value={assignBy}
-            disabled
             onChange={(e) => setAssignBy(e.target.value)}
+            disabled
             variant="standard"
             style={{ marginBottom: 5, marginTop: 5, width: 400 }}
           />
           <Divider />
           {/* assign to input  */}
+
           <IconButton color="primary">
             <SupervisorAccountIcon />
           </IconButton>
-          <FormControl>
+
+          <FormControl
+            variant="standard"
+            style={{ marginBottom: 15, width: 400, marginTop: 5 }}
+          >
+            <InputLabel shrink id="assigneSelect">
+              Severity
+            </InputLabel>
             <Select
-              id="assigneSelect"
+              labelId="assigneSelect"
               value={getUser}
-              variant="standard"
-              placeholder="Assign To"
-              label="Assign To"
               disabled
-              style={{ marginBottom: 5, width: 400, marginTop: 5 }}
               onChange={handleAssignee}
             >
               <MenuItem value="0">-- Select User --</MenuItem>
@@ -278,8 +299,8 @@ export default function EditAssigneeModal(props) {
                 ))}
             </Select>
           </FormControl>
-
           <Divider />
+
           {/* create date input  */}
           <IconButton color="primary">
             <CalendarMonthIcon />
@@ -292,19 +313,23 @@ export default function EditAssigneeModal(props) {
             style={{ marginBottom: 5, width: 400, marginTop: 5 }}
           />
           <Divider />
+
           {/* set asset itd input field  */}
+
           <IconButton color="primary">
             <CorporateFareIcon />
           </IconButton>
-          <FormControl>
+          <FormControl
+            variant="standard"
+            style={{ marginBottom: 15, width: 400, marginTop: 5 }}
+          >
+            <InputLabel shrink id="assetIdSelect">
+              Asset Id
+            </InputLabel>
             <Select
-              id="assetIdSelect"
+              labelId="assetIdSelect"
               value={getAsset}
-              variant="standard"
-              placeholder="Asset ID"
-              label="Asset ID"
               disabled
-              style={{ marginBottom: 5, width: 400, marginTop: 5 }}
               onChange={handleAssetId}
             >
               <MenuItem value="0">-- Select handleAssetId --</MenuItem>
@@ -317,6 +342,9 @@ export default function EditAssigneeModal(props) {
             </Select>
           </FormControl>
           <Divider />
+
+          {/* input description  */}
+
           <IconButton color="primary">
             <CorporateFareIcon />
           </IconButton>
@@ -331,18 +359,23 @@ export default function EditAssigneeModal(props) {
           />
           <Divider />
 
+          {/* edit severity   */}
+
           <IconButton color="primary">
             <PriorityHighIcon />
           </IconButton>
-          <FormControl>
+          <FormControl
+            variant="standard"
+            style={{ marginBottom: 15, width: 400, marginTop: 5 }}
+          >
+            <InputLabel shrink id="selcetSeverity">
+              Severity
+            </InputLabel>
             <Select
-              id="severitySelect"
+              labelId="selcetSeverity"
               value={getSeverty}
               variant="standard"
-              placeholder="Severity"
-              label="Severity"
               disabled
-              style={{ marginBottom: 5, width: 400, marginTop: 5 }}
               onChange={handeSeverity}
             >
               <MenuItem value="0">-- Select getSeverties --</MenuItem>
@@ -355,20 +388,23 @@ export default function EditAssigneeModal(props) {
             </Select>
           </FormControl>
           <Divider />
+
           {/* incedent selet input  */}
           <IconButton color="primary">
             <SmsFailedIcon />
           </IconButton>
-          <FormControl>
+          <FormControl
+            variant="standard"
+            style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+          >
+            <InputLabel shrink id="incedentSelect">
+              Incident
+            </InputLabel>
             <Select
-              id="incedentSelect"
               value={getIncedent}
-              variant="standard"
-              placeholder="Incident"
-              label="Incident"
-              disabled
-              style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+              labelId="incedentSelect"
               onChange={handeIncedent}
+              disabled
             >
               <MenuItem value="0">-- Select an incident --</MenuItem>
               {getIncedents.length > 0 &&
@@ -384,11 +420,13 @@ export default function EditAssigneeModal(props) {
 
         <DialogActions style={{ marginBottom: 10 }}>
           <Button variant="contained" color="error" onClick={handleClose}>
-            Cancel
+            Close
           </Button>
-          <Button variant="contained" color="success" onClick={handleUpdate}>
-            Update
-          </Button>
+          {isModalEdit ? (
+            <Button variant="contained" color="success" onClick={handleUpdate}>
+              Update
+            </Button>
+          ) : null}
         </DialogActions>
       </Dialog>
     </FormControl>

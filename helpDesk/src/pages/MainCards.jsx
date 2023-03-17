@@ -4,6 +4,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
 import { baseURL } from "../App";
+import Tickets from "./Tickets";
 
 export default function MainCards() {
   const [cards, setCards] = React.useState([]);

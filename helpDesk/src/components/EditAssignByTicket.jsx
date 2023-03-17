@@ -10,7 +10,9 @@ import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Divider from "@mui/material/Divider";
-
+import { InputLabel } from "@mui/material";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import PersonIcon from "@mui/icons-material/Person";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -23,6 +25,7 @@ import { baseURL } from "../App";
 import { Stack } from "@mui/system";
 import dayjs from "dayjs";
 import axios from "axios";
+import Ticketlog from "./Ticketlog";
 
 export default function EditAssignByTicket({
   show,
@@ -31,7 +34,9 @@ export default function EditAssignByTicket({
   isModalEdit,
 }) {
   const [isLoaded, setisLoaded] = React.useState(false);
+  const [openLog, setOpenLog] = React.useState(false);
   const handleClose = () => close();
+
   var now = dayjs();
   var formattedDate = now.format("YYYY/MM/DD");
 
@@ -49,36 +54,41 @@ export default function EditAssignByTicket({
   const [getStatus, setGetStatus] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [getTicket, setGetTicket] = React.useState("");
+  const [TicketLogTicketId, setTicketLogTicketId] = React.useState("");
 
   React.useEffect(() => {
     const fetchData = async () => {
-      try {
-        const statuses = await axios.get(`${baseURL}/GetHelpDeskStatuses`);
-        setGetStatuses(statuses.data);
-        const severities = await axios.get(`${baseURL}/GetHelpDeskSeverities`);
-        setGetSeverties(severities.data);
-        const incidents = await axios.get(`${baseURL}/GetHelpDeskIncidents`);
-        setGetIncedents(incidents.data);
-        const assets = await axios.get(`${baseURL}/GetHelpDeskAssets`);
-        setGetAssets(assets.data);
-        const users = await axios.get(`${baseURL}/GetHelpDeskUsers`);
-        setGetUsers(users.data);
+      if (show) {
+        try {
+          const statuses = await axios.get(`${baseURL}/GetHelpDeskStatuses`);
+          setGetStatuses(statuses.data);
+          const severities = await axios.get(
+            `${baseURL}/GetHelpDeskSeverities`
+          );
+          setGetSeverties(severities.data);
+          const incidents = await axios.get(`${baseURL}/GetHelpDeskIncidents`);
+          setGetIncedents(incidents.data);
+          const assets = await axios.get(`${baseURL}/GetHelpDeskAssets`);
+          setGetAssets(assets.data);
+          const users = await axios.get(`${baseURL}/GetHelpDeskUsers`);
+          setGetUsers(users.data);
 
-        const ticket = await axios.get(`${baseURL}GetHelpDesk?id=` + ticketId);
-        setGetTicket(ticket.data);
-        setGetSeverty(ticket.data.severityId);
-        setGetIncedent(ticket.data.incidentId);
-        setGetAsset(ticket.data.assetId);
-        setGetUser(ticket.data.assigneeId);
-        setGetStatus(ticket.data.statusId);
-        setDescription(ticket.data.description);
-        setisLoaded(true);
-        console.log(ticket.data);
-      } catch (error) {
-        console.log(error);
+          const ticket = await axios.get(
+            `${baseURL}GetHelpDesk?id=` + ticketId
+          );
+          setGetTicket(ticket.data);
+          setGetSeverty(ticket.data.severityId);
+          setGetIncedent(ticket.data.incidentId);
+          setGetAsset(ticket.data.assetId);
+          setGetUser(ticket.data.assigneeId);
+          setGetStatus(ticket.data.statusId);
+          setDescription(ticket.data.description);
+          setisLoaded(true);
+        } catch (error) {
+          console.log(error);
+        }
       }
     };
-
     fetchData();
   }, [ticketId]);
 
@@ -106,8 +116,15 @@ export default function EditAssignByTicket({
       .catch((err) => {
         console.log(err);
       });
+    showToastMessage();
+    handleClose();
   };
 
+  const handleTicketLog = () => {
+    setTicketLogTicketId(ticketId);
+    setOpenLog(true);
+    handleClose();
+  };
   const handleChange = (e) => {
     const value = e.target.value;
     setGetStatus(value);
@@ -130,8 +147,16 @@ export default function EditAssignByTicket({
     setGetUser(value);
   };
 
+  const showToastMessage = () => {
+    toast.success("Update Ticket Successfully. ", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 1500,
+    });
+  };
+
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} size="medium">
+      <ToastContainer />
       <Dialog open={show} onClose={handleClose}>
         <Stack
           display={"flex"}
@@ -154,22 +179,28 @@ export default function EditAssignByTicket({
           <IconButton color="primary">
             <PendingIcon />
           </IconButton>
-          <Select
-            id="statusSelect"
-            value={getStatus}
+          <FormControl
             variant="standard"
-            placeholder="status"
-            onChange={handleChange}
-            label="Status"
-            disabled={!isModalEdit}
             style={{ marginBottom: 5, width: 400, marginTop: 5 }}
           >
-            {getStatuses.map((item) => (
-              <MenuItem value={item.Id} key={item.Id}>
-                {item.Description}
-              </MenuItem>
-            ))}
-          </Select>
+            <InputLabel shrink id="statusSelect">
+              Status
+            </InputLabel>
+
+            <Select
+              labelId="statusSelect"
+              value={getStatus}
+              onChange={handleChange}
+              disabled
+              style={{ marginBottom: 5, width: 400 }}
+            >
+              {getStatuses.map((item) => (
+                <MenuItem value={item.Id} key={item.Id}>
+                  {item.Description}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <Divider />
 
           {/* assign by input  */}
@@ -187,18 +218,22 @@ export default function EditAssignByTicket({
           />
           <Divider />
           {/* assign to input  */}
+
           <IconButton color="primary">
             <SupervisorAccountIcon />
           </IconButton>
-          <FormControl>
+
+          <FormControl
+            variant="standard"
+            style={{ marginBottom: 5, width: 400, marginTop: 5 }}
+          >
+            <InputLabel shrink id="assigneSelect">
+              Assign To
+            </InputLabel>
             <Select
-              id="assigneSelect"
+              labelId="assigneSelect"
               value={getUser}
-              variant="standard"
-              placeholder="Assign To"
-              label="Assign To"
               disabled={!isModalEdit}
-              style={{ marginBottom: 5, width: 400, marginTop: 5 }}
               onChange={handleAssignee}
             >
               <MenuItem value="0">-- Select User --</MenuItem>
@@ -220,6 +255,7 @@ export default function EditAssignByTicket({
             value={formattedDate}
             label="Cretaed Date"
             placeholder="Created Date"
+            variant="standard"
             disabled
             style={{ marginBottom: 5, width: 400, marginTop: 5 }}
           />
@@ -228,15 +264,17 @@ export default function EditAssignByTicket({
           <IconButton color="primary">
             <CorporateFareIcon />
           </IconButton>
-          <FormControl>
+          <FormControl
+            variant="standard"
+            style={{ marginBottom: 15, width: 400, marginTop: 5 }}
+          >
+            <InputLabel shrink id="assetIdSelect">
+              Asset Id
+            </InputLabel>
             <Select
-              id="assetIdSelect"
+              labelId="assetIdSelect"
               value={getAsset}
-              variant="standard"
-              placeholder="Asset ID"
-              label="Asset ID"
               disabled={!isModalEdit}
-              style={{ marginBottom: 5, width: 400, marginTop: 5 }}
               onChange={handleAssetId}
             >
               <MenuItem value="0">-- Select handleAssetId --</MenuItem>
@@ -249,6 +287,7 @@ export default function EditAssignByTicket({
             </Select>
           </FormControl>
           <Divider />
+          {/* description input  */}
           <IconButton color="primary">
             <CorporateFareIcon />
           </IconButton>
@@ -256,24 +295,29 @@ export default function EditAssignByTicket({
             id="outlined-basic"
             label="Description"
             disabled={!isModalEdit}
+            value={description}
             onChange={(e) => setDescription(e.target.value)}
             variant="standard"
             style={{ marginBottom: 5, marginTop: 5, width: 400 }}
           />
           <Divider />
+          {/* severity input  */}
 
           <IconButton color="primary">
             <PriorityHighIcon />
           </IconButton>
-          <FormControl>
+
+          <FormControl
+            variant="standard"
+            style={{ marginBottom: 15, width: 400, marginTop: 5 }}
+          >
+            <InputLabel shrink id="severitySelect">
+              Severity
+            </InputLabel>
             <Select
-              id="severitySelect"
+              labelId="severitySelect"
               value={getSeverty}
-              variant="standard"
-              placeholder="Severity"
-              label="Severity"
               disabled={!isModalEdit}
-              style={{ marginBottom: 5, width: 400, marginTop: 5 }}
               onChange={handeSeverity}
             >
               <MenuItem value="0">-- Select getSeverties --</MenuItem>
@@ -286,19 +330,24 @@ export default function EditAssignByTicket({
             </Select>
           </FormControl>
           <Divider />
+
           {/* incedent selet input  */}
+
           <IconButton color="primary">
             <SmsFailedIcon />
           </IconButton>
-          <FormControl>
+
+          <FormControl
+            variant="standard"
+            style={{ marginBottom: 15, width: 400, marginTop: 5 }}
+          >
+            <InputLabel shrink id="incedentSelect">
+              Incident
+            </InputLabel>
             <Select
-              id="incedentSelect"
+              labelId="incedentSelect"
               value={getIncedent}
-              variant="standard"
-              placeholder="Incident"
-              label="Incident"
               disabled={!isModalEdit}
-              style={{ marginBottom: 5, width: 400, marginTop: 5 }}
               onChange={handeIncedent}
             >
               <MenuItem value="0">-- Select an incident --</MenuItem>
@@ -315,13 +364,27 @@ export default function EditAssignByTicket({
 
         <DialogActions style={{ marginBottom: 10 }}>
           <Button variant="contained" color="error" onClick={handleClose}>
-            Cancel
+            Close
           </Button>
-          <Button variant="contained" color="success" onClick={handleUpdate}>
-            Update
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={() => handleTicketLog()}
+          >
+            View Logs
           </Button>
+          {isModalEdit ? (
+            <Button variant="contained" color="success" onClick={handleUpdate}>
+              Update
+            </Button>
+          ) : null}
         </DialogActions>
       </Dialog>
+      <Ticketlog
+        show={openLog}
+        close={() => setOpenLog(false)}
+        ticketId={TicketLogTicketId}
+      />
     </FormControl>
   );
 }
