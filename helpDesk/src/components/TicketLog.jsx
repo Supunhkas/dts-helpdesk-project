@@ -75,7 +75,7 @@ const Ticketlog = ({ show, close, ticketId }) => {
               <TableRow>
                 <TableCell>Ticket ID</TableCell>
                 <TableCell>Status</TableCell>
-                <TableCell>User</TableCell>
+                {/* <TableCell>User</TableCell> */}
                 <TableCell>Activity</TableCell>
                 <TableCell>Remarks</TableCell>
                 <TableCell>Date</TableCell>
@@ -105,7 +105,7 @@ const Ticketlog = ({ show, close, ticketId }) => {
                       }
                     />
                   </TableCell>
-                  <TableCell>{item.userId}</TableCell>
+                  {/* <TableCell>{item.userId}</TableCell> */}
                   <TableCell>{item.activityId}</TableCell>
                   <TableCell>{item.remarks}</TableCell>
                   <TableCell>{item.dateTime}</TableCell>
