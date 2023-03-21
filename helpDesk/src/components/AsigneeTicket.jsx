@@ -13,8 +13,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import ViewUserModal from "./ViewUserModal";
 import EditAssigneeModal from "./EditAssigneeModal";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+
 import axios from "axios";
 import { baseURL } from "../App";
 
@@ -96,7 +96,6 @@ const AsigneeTicket = () => {
   };
   return (
     <React.Fragment>
-      <ToastContainer />
       <Table size="small">
         <TableHead>
           <TableRow>

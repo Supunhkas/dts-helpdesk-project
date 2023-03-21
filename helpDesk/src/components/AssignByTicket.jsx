@@ -12,8 +12,7 @@ import EditSharpIcon from "@mui/icons-material/EditSharp";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import ViewUserModal from "./ViewUserModal";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import axios from "axios";
 import EditAssignByTicket from "./EditAssignByTicket";
 import { baseURL } from "../App";
@@ -99,7 +98,6 @@ const AssignByTicket = () => {
   };
   return (
     <React.Fragment>
-      <ToastContainer />
       <Table size="small">
         <TableHead>
           <TableRow>

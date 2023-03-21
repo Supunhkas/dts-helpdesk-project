@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import LoadingButton from "@mui/lab/LoadingButton";
 import CardImg from "../assets/helpDesk.png";
 import bgVideo from "../assets/video.mp4";
+import { useNavigate } from "react-router-dom";
 
 const styles = {
   container: {
@@ -24,8 +25,10 @@ const styles = {
 };
 
 const Login = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = React.useState(false);
   function handleClick() {
+    navigate("home");
     setLoading(true);
   }
   const handleSubmit = (event) => {

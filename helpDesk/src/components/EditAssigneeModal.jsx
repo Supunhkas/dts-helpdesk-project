@@ -11,8 +11,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Divider from "@mui/material/Divider";
 import { InputLabel } from "@mui/material";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import PersonIcon from "@mui/icons-material/Person";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -159,7 +158,6 @@ export default function EditAssigneeModal(props) {
   };
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} size="medium">
-      <ToastContainer />
       <Dialog open={show} onClose={handleClose}>
         <Stack
           display={"flex"}
