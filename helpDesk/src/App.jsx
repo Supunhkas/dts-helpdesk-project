@@ -6,8 +6,12 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Routes, Route } from "react-router-dom";
+import axios from "axios";
+import PrivateRoutes from "./utils/PrivateRoutes";
 
 const App = () => {
+  axios.defaults.headers.common["X-My-Secret-Token"] =
+    "HTjjLDxeK9wpYyRTIkptvg==";
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -21,8 +25,10 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <ToastContainer />
         <Routes>
+          <Route element={<PrivateRoutes />}>
+            <Route path="home" Component={Dashboard2} />
+          </Route>
           <Route path="/" Component={Login} />
-          <Route path="home" Component={Dashboard2} />
         </Routes>
       </QueryClientProvider>
     </div>
@@ -30,4 +36,4 @@ const App = () => {
 };
 
 export default App;
-export const baseURL = "http://192.168.78.174/HelpDesk/";
+export const baseURL = "http://192.168.168.174/HelpDesk/";

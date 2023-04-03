@@ -4,8 +4,10 @@ import { Box, Paper, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import LoadingButton from "@mui/lab/LoadingButton";
 import CardImg from "../assets/helpDesk.png";
-import bgVideo from "../assets/video.mp4";
 import { useNavigate } from "react-router-dom";
+import CryptoJS from "crypto-js";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const styles = {
   container: {
@@ -14,34 +16,72 @@ const styles = {
     alignItems: "center",
     height: "100vh",
   },
-  // video: {
-  //   position: "fixed",
-  //   top: 0,
-  //   left: 0,
-  //   width: "100%",
-  //   height: "100%",
-  //   zIndex: -1,
-  // },
 };
 
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState(false);
-  function handleClick() {
-    navigate("home");
-    setLoading(true);
+  const [errorMessage, setErrorMessage] = React.useState("");
+
+  const [userName, setuserName] = React.useState("");
+  const [password, setpassword] = React.useState("");
+  // const [usertype, setUsertype] = React.useState("");
+  // localStorage.setItem("components", JSON.stringify(components));
+
+  function onSubmit() {
+    var loginKey = Encryption(userName + "`" + password);
+    const url =
+      "http://192.168.168.174/Authenticate/authenticate?authkey=" + loginKey;
+    axios
+      .post(url)
+      .then((result) => {
+        if (result.data.statusCode == "True") {
+          localStorage.setItem("token", loginKey);
+
+          navigate("Home");
+          showSuccesToast();
+        } else {
+          showToastMessage();
+        }
+      })
+      .catch((error) => {
+        console.error("There was an error!", error);
+      });
   }
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      userName: data.get("userName"),
-      password: data.get("password"),
+
+  function Encryption(number) {
+    var key = CryptoJS.enc.Utf8.parse(import.meta.env.VITE_APIKEY);
+    var iv = CryptoJS.enc.Utf8.parse(import.meta.env.VITE_APIKEY);
+    var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(number), key, {
+      keySize: 64 / 4,
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+    return encrypted.toString();
+  }
+  const handleUsername = (e) => {
+    setuserName(e.target.value);
+  };
+
+  const handlePassword = (e) => {
+    setpassword(e.target.value);
+  };
+  const showToastMessage = () => {
+    toast.error("Pleace Check Details ", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 1000,
     });
   };
+  const showSuccesToast = () => {
+    toast.success("Login Success ", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 1000,
+    });
+  };
+
   return (
     <>
-      {/* <video src={bgVideo} autoPlay loop style={styles.video} /> */}
       <div style={styles.container}>
         <Paper
           sx={{
@@ -72,7 +112,6 @@ const Login = () => {
               }}
             >
               <Box sx={{ height: "100%" }}>
-                {" "}
                 <Typography variant="h3" gutterBottom sx={{ mx: 4 }}>
                   Welcome Back
                 </Typography>
@@ -90,12 +129,7 @@ const Login = () => {
                     justifyContent: "center",
                   }}
                 >
-                  <Box
-                    component="form"
-                    noValidate
-                    onSubmit={handleSubmit}
-                    sx={{ mt: 1 }}
-                  >
+                  <Box component="form" noValidate sx={{ mt: 1 }}>
                     <TextField
                       margin="normal"
                       required
@@ -103,6 +137,7 @@ const Login = () => {
                       id="userName"
                       label="UserName"
                       name="userName"
+                      onChange={handleUsername}
                       autoFocus
                     />
                     <TextField
@@ -114,23 +149,26 @@ const Login = () => {
                       type="password"
                       id="password"
                       autoComplete="current-password"
+                      onChange={handlePassword}
                     />
 
                     <LoadingButton
-                      type="submit"
+                      onClick={onSubmit}
                       fullWidth
                       sx={{
                         mt: 3,
                         mb: 2,
                         height: 40,
                       }}
-                      onClick={handleClick}
                       loading={loading}
                       variant="contained"
                     >
                       <span>Sign In</span>
                     </LoadingButton>
                   </Box>
+                  {errorMessage && (
+                    <p style={{ color: "red" }}>{errorMessage}</p>
+                  )}
                 </Box>
               </Box>
             </Grid>

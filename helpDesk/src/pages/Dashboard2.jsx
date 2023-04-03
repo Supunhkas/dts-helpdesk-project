@@ -21,11 +21,12 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { mainListItems, secondaryListItems } from "../pages/ListItem";
+import { mainListItems, secondaryListItems } from "./Testing/ListItem";
 import Tickets from "./Tickets";
 import MainCards from "./MainCards";
 import AsigneeTicket from "../components/AsigneeTicket";
 import AssignByTicket from "../components/AssignByTicket";
+import NavList from "../pages/Testing/NavList";
 
 function Copyright(props) {
   return (
@@ -45,7 +46,7 @@ function Copyright(props) {
   );
 }
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -145,7 +146,7 @@ function DashboardContent() {
         <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
-              pr: "24px", // keep right padding when drawer closed
+              pr: "24px",
             }}
           >
             <IconButton
@@ -184,20 +185,19 @@ function DashboardContent() {
             sx={{
               display: "flex",
               alignItems: "center",
-              justifyContent: "flex-end",
+              justifyContent: "space-between",
               px: [1],
             }}
           >
+            <h4>HelpDesk</h4>
+
             <IconButton onClick={toggleDrawer}>
               <ChevronLeftIcon />
             </IconButton>
           </Toolbar>
           <Divider />
-          <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
-          </List>
+
+          <NavList />
         </Drawer>
         <Box
           component="main"
@@ -229,19 +229,6 @@ function DashboardContent() {
                 </Paper>
               </Grid>
 
-              {/* <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 240,
-                  }}
-                >
-                  <Cards />
-                </Paper>
-              </Grid> */}
-              {/* Recent Tickets */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
                   <Tabs

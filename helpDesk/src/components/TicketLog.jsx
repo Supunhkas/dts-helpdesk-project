@@ -34,26 +34,6 @@ const Ticketlog = ({ show, close, ticketId }) => {
       .then((res) => res.data);
   });
 
-  // if (isLoading) {
-  //   return <h1>Loading...</h1>;
-  // }
-
-  // React.useEffect(() => {
-  //   if (show) {
-  //     getlogs();
-  //   }
-
-  //   function getlogs() {
-  //     axios
-  //       .get(`${baseURL}/GetDetailsLog?id=${ticketId}`)
-  //       .then((res) => {
-  //         setTicketLog(res.data);
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //   }
-  // }, [ticketId]);
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);

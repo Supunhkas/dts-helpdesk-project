@@ -4,6 +4,7 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import { Chip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
@@ -27,7 +28,7 @@ const AsigneeTicket = () => {
   const [isModalEdit, setIsModalEdit] = React.useState(true);
   const [ticketId, setTicketId] = React.useState("");
 
-  var User_id = 2;
+  var User_id = 1;
 
   const [selectedRowData, setSelectedRowData] = React.useState(null);
   const handleChangePage = (event, newPage) => {
