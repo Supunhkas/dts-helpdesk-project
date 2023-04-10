@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Routes, Route } from "react-router-dom";
 import axios from "axios";
 import PrivateRoutes from "./utils/PrivateRoutes";
+import Componentloader from "./components/Componentloader";
 
 const App = () => {
   axios.defaults.headers.common["X-My-Secret-Token"] =
@@ -26,7 +27,8 @@ const App = () => {
         <ToastContainer />
         <Routes>
           <Route element={<PrivateRoutes />}>
-            <Route path="home" Component={Dashboard2} />
+            <Route path="/home" Component={Dashboard2} />
+            <Route path="/home/Componentloader" Component={Componentloader} />
           </Route>
           <Route path="/" Component={Login} />
         </Routes>
@@ -36,4 +38,4 @@ const App = () => {
 };
 
 export default App;
-export const baseURL = "http://192.168.168.174/HelpDesk/";
+export const baseURL = "http://192.168.46.174/HelpDesk/";

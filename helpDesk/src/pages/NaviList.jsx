@@ -1,17 +1,16 @@
-import * as React from "react";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import LogoutIcon from "@mui/icons-material/Logout";
-import ListItemText from "@mui/material/ListItemText";
-import Collapse from "@mui/material/Collapse";
-import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
-import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import {
+  Collapse,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 import axios from "axios";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 function LogoutButton() {
-  const navigate = useNavigate();
   return (
     <ListItemButton onClick={() => (localStorage.clear(), navigate("/"))}>
       <ListItemIcon>
@@ -22,16 +21,14 @@ function LogoutButton() {
   );
 }
 
-export default function NavItems() {
+function NaviList() {
+  const navigate = useNavigate();
   const [components, setComponents] = React.useState([]);
   const [subcomponents, setSubComponents] = React.useState([]);
   const [openStates, setOpenStates] = React.useState([]);
   const token = localStorage.getItem("token");
 
-  const navigate = useNavigate();
   function loadSub(code, index) {
-    navigate("ComponentLoader");
-    localStorage.setItem("code", code);
     setOpenStates((prevStates) =>
       prevStates.map((state, i) => (i === index ? !state : state))
     );
@@ -41,14 +38,12 @@ export default function NavItems() {
       )
       .then((res) => {
         setSubComponents(res.data);
-        console.log(code);
         console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
   }
-
   React.useEffect(() => {
     axios
       .get("http://192.168.46.174/Access/GetAccessHeadComponent")
@@ -109,3 +104,5 @@ export default function NavItems() {
     </React.Fragment>
   );
 }
+
+export default NaviList;

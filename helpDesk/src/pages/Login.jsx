@@ -31,7 +31,7 @@ const Login = () => {
   function onSubmit() {
     var loginKey = Encryption(userName + "`" + password);
     const url =
-      "http://192.168.168.174/Authenticate/authenticate?authkey=" + loginKey;
+      "http://192.168.46.174/Authenticate/authenticate?authkey=" + loginKey;
     axios
       .post(url)
       .then((result) => {

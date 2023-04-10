@@ -5,7 +5,6 @@ import MuiDrawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -21,7 +20,6 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { mainListItems, secondaryListItems } from "./Testing/ListItem";
 import Tickets from "./Tickets";
 import MainCards from "./MainCards";
 import AsigneeTicket from "../components/AsigneeTicket";
@@ -78,6 +76,7 @@ const Drawer = styled(MuiDrawer, {
       duration: theme.transitions.duration.enteringScreen,
     }),
     boxSizing: "border-box",
+
     ...(!open && {
       overflowX: "hidden",
       transition: theme.transitions.create("width", {
