@@ -30,7 +30,6 @@ export default function NavItems() {
 
   const navigate = useNavigate();
   function loadSub(code, index) {
-    navigate("ComponentLoader");
     localStorage.setItem("code", code);
     setOpenStates((prevStates) =>
       prevStates.map((state, i) => (i === index ? !state : state))
@@ -41,8 +40,7 @@ export default function NavItems() {
       )
       .then((res) => {
         setSubComponents(res.data);
-        console.log(code);
-        console.log(res.data);
+        navigate(`ComponentLoader`);
       })
       .catch((err) => {
         console.log(err);
@@ -72,35 +70,37 @@ export default function NavItems() {
         }}
       >
         <div>
-          {components &&
-            components.map((component, index) => (
-              <React.Fragment key={component.code}>
-                <ListItemButton
-                  onClick={() => loadSub(component.code, index)}
-                  sx={{ height: "60px" }}
-                >
-                  <ListItemIcon>
-                    <SupervisorAccountIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={component.description} />
-                  {openStates[index] ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
+          <list>
+            {components &&
+              components.map((component, index) => (
+                <React.Fragment key={component.code}>
+                  <ListItemButton
+                    onClick={() => loadSub(component.code, index)}
+                    sx={{ height: "60px" }}
+                  >
+                    <ListItemIcon>
+                      <SupervisorAccountIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={component.description} />
+                    {openStates[index] ? <ExpandLess /> : <ExpandMore />}
+                  </ListItemButton>
 
-                {/* sub componnent  */}
+                  {/* sub componnent  */}
 
-                <Collapse in={openStates[index]} timeout="auto" unmountOnExit>
-                  {subcomponents &&
-                    subcomponents.map((item) => (
-                      <ListItemButton key={item.code}>
-                        <ListItemIcon>
-                          <FormatListBulletedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={item.description} />
-                      </ListItemButton>
-                    ))}
-                </Collapse>
-              </React.Fragment>
-            ))}
+                  <Collapse in={openStates[index]} timeout="auto" unmountOnExit>
+                    {subcomponents &&
+                      subcomponents.map((item) => (
+                        <ListItemButton key={item.code}>
+                          <ListItemIcon>
+                            <FormatListBulletedIcon />
+                          </ListItemIcon>
+                          <ListItemText primary={item.description} />
+                        </ListItemButton>
+                      ))}
+                  </Collapse>
+                </React.Fragment>
+              ))}
+          </list>
         </div>
         <div style={{ marginBottom: "15%" }}>
           <LogoutButton />

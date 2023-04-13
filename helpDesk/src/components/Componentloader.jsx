@@ -17,7 +17,7 @@ function Componentloader() {
   React.useEffect(() => {
     axios
       .get(
-        `http://192.168.46.174/Access/GetAccessSubComponent?headCompId=10&authkey=${token}`
+        `http://192.168.46.174/Access/GetAccessSubComponent?headCompId=${code}&authkey=${token}`
       )
       .then((res) => {
         setSubComponents(res.data);
