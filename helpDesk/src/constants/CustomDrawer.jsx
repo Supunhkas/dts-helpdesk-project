@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import NavList from "../pages/Testing/NavList";
+import NavList from "../pages/NavList";
 
 const drawerWidth = 300;
 

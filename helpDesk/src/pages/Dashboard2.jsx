@@ -17,6 +17,7 @@ import AsigneeTicket from "../components/AsigneeTicket";
 import AssignByTicket from "../components/AssignByTicket";
 import CustomAppBar from "../constants/CustomAppBar";
 import CustomDrawer from "../constants/CustomDrawer";
+import { Outlet, useOutlet } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -73,7 +74,7 @@ function a11yProps(index) {
 const mdTheme = createTheme();
 
 function DashboardContent() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -82,13 +83,15 @@ function DashboardContent() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  const outlet = useOutlet();
+
   return (
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-
         <CustomAppBar open={open} toggleDrawer={toggleDrawer} />
         <CustomDrawer open={open} toggleDrawer={toggleDrawer} />
+
         <Box
           component="main"
           sx={{
@@ -102,48 +105,57 @@ function DashboardContent() {
           }}
         >
           <Toolbar />
+
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {/* Main cards */}
-              <Grid item xs={12} md={12} lg={12}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "row",
-                    height: 240,
-                    backgroundColor: "transparent",
-                  }}
-                >
-                  <MainCards />
-                </Paper>
-              </Grid>
+            {outlet ? (
+              <Outlet />
+            ) : (
+              <>
+                <Grid container spacing={3}>
+                  {/* Main cards */}
+                  <Grid item xs={12} md={12} lg={12}>
+                    <Paper
+                      sx={{
+                        p: 2,
+                        display: "flex",
+                        flexDirection: "row",
+                        height: 240,
+                        backgroundColor: "transparent",
+                      }}
+                    >
+                      <MainCards />
+                    </Paper>
+                  </Grid>
 
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    aria-label="basic tabs example"
-                  >
-                    <Tab label="All Tickets" {...a11yProps(0)} />
-                    <Tab label="Assignee Tickets" {...a11yProps(1)} />
-                    <Tab label="Assign By Tickets" {...a11yProps(2)} />
-                  </Tabs>
+                  <Grid item xs={12}>
+                    <Paper
+                      sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                    >
+                      <Tabs
+                        value={value}
+                        onChange={handleChange}
+                        aria-label="basic tabs example"
+                      >
+                        <Tab label="All Tickets" {...a11yProps(0)} />
+                        <Tab label="Assignee Tickets" {...a11yProps(1)} />
+                        <Tab label="Assign By Tickets" {...a11yProps(2)} />
+                      </Tabs>
 
-                  <TabPanel value={value} index={0}>
-                    <Tickets />
-                  </TabPanel>
-                  <TabPanel value={value} index={1}>
-                    <AsigneeTicket />
-                  </TabPanel>
-                  <TabPanel value={value} index={2}>
-                    <AssignByTicket />
-                  </TabPanel>
-                </Paper>
-              </Grid>
-            </Grid>
-            <Copyright sx={{ pt: 4 }} />
+                      <TabPanel value={value} index={0}>
+                        <Tickets />
+                      </TabPanel>
+                      <TabPanel value={value} index={1}>
+                        <AsigneeTicket />
+                      </TabPanel>
+                      <TabPanel value={value} index={2}>
+                        <AssignByTicket />
+                      </TabPanel>
+                    </Paper>
+                  </Grid>
+                </Grid>
+                <Copyright sx={{ pt: 4 }} />
+              </>
+            )}
           </Container>
         </Box>
       </Box>

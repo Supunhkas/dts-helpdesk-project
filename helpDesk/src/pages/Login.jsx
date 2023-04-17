@@ -25,8 +25,6 @@ const Login = () => {
 
   const [userName, setuserName] = React.useState("");
   const [password, setpassword] = React.useState("");
-  // const [usertype, setUsertype] = React.useState("");
-  // localStorage.setItem("components", JSON.stringify(components));
 
   function onSubmit() {
     var loginKey = Encryption(userName + "`" + password);

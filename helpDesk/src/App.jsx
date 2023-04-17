@@ -9,6 +9,10 @@ import { Routes, Route } from "react-router-dom";
 import axios from "axios";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import Componentloader from "./components/Componentloader";
+import SubComponent1 from "./components/subComponents/SubComponent1";
+import SubComponent12 from "./components/subComponents/SubComponent2";
+import SubComponent3 from "./components/subComponents/SubComponent3";
+import SubComponent4 from "./components/subComponents/SubComponent4";
 
 const App = () => {
   axios.defaults.headers.common["X-My-Secret-Token"] =
@@ -27,8 +31,9 @@ const App = () => {
         <ToastContainer />
         <Routes>
           <Route element={<PrivateRoutes />}>
-            <Route path="/home" Component={Dashboard2} />
-            <Route path="/home/Componentloader" Component={Componentloader} />
+            <Route path="home" Component={Dashboard2}>
+              <Route path="Componentloader" Component={Componentloader} />
+            </Route>
           </Route>
           <Route path="/" Component={Login} />
         </Routes>
