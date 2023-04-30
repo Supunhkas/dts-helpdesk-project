@@ -41,6 +41,7 @@ const Login = () => {
         } else {
           showToastMessage();
         }
+        console.log(loginKey);
       })
       .catch((error) => {
         console.error("There was an error!", error);

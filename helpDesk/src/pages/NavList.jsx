@@ -40,7 +40,6 @@ export default function NavItems() {
         `http://192.168.46.174/Access/GetAccessSubComponent?headCompId=${code}&authkey=${token}`
       )
       .then((res) => {
-        console.log(res.data);
         if (res.data.length === 0) {
           navigate("/home");
         } else {

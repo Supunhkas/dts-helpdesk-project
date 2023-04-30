@@ -9,14 +9,11 @@ import { Routes, Route } from "react-router-dom";
 import axios from "axios";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import Componentloader from "./components/Componentloader";
-import SubComponent1 from "./components/subComponents/SubComponent1";
-import SubComponent12 from "./components/subComponents/SubComponent2";
-import SubComponent3 from "./components/subComponents/SubComponent3";
-import SubComponent4 from "./components/subComponents/SubComponent4";
 
 const App = () => {
+  console.log("hit", localStorage.getItem("token"));
   axios.defaults.headers.common["X-My-Secret-Token"] =
-    "HTjjLDxeK9wpYyRTIkptvg==";
+    localStorage.getItem("token");
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {

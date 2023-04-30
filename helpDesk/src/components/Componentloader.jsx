@@ -4,8 +4,8 @@ import SubComponent2 from "./subComponents/SubComponent2";
 import SubComponent3 from "./subComponents/SubComponent3";
 import SubComponent4 from "./subComponents/SubComponent4";
 import { useNavigate } from "react-router-dom";
-import { Outlet } from "react-router-dom";
 import axios from "axios";
+import { InputLabel } from "@mui/material";
 
 function Componentloader() {
   const [subcomponents, setSubComponents] = React.useState([]);
@@ -20,7 +20,13 @@ function Componentloader() {
         `http://192.168.46.174/Access/GetAccessSubComponent?headCompId=${code}&authkey=${token}`
       )
       .then((res) => {
-        setSubComponents(res.data);
+        const componentsArray = res.data.map((subcomponent) => {
+          const ComponentToRender = subcomponent.code;
+          const PascalCaseComponent = eval(ComponentToRender);
+          return <PascalCaseComponent key={subcomponent.id} />;
+        });
+
+        setSubComponents(componentsArray);
       })
       .catch((err) => {
         console.log(err);
@@ -29,20 +35,11 @@ function Componentloader() {
 
   return (
     <React.Fragment>
-      {subcomponents.map((subcomponent) => {
-        switch (subcomponent.code) {
-          case "1.1":
-            return <SubComponent1 key={subcomponent.id} />;
-          case "1.2":
-            return <SubComponent2 key={subcomponent.id} />;
-          case "1.3":
-            return <SubComponent3 key={subcomponent.id} />;
-          case "1.4":
-            return <SubComponent4 key={subcomponent.id} />;
-          default:
-            return null;
-        }
-      })}
+      {subcomponents.length > 0 ? (
+        subcomponents
+      ) : (
+        <InputLabel>Loading subcomponents...</InputLabel>
+      )}
     </React.Fragment>
   );
 }
